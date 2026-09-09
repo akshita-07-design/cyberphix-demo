@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="CyberPhix Blockchain Fraud Intelligence Platform - SIH 2026 Demo">
+<title>CyberPhix | Blockchain Fraud Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+ --bg:#f2fbf5;--card:#fff;--green:#16a34a;--green2:#22c55e;--dark:#14532d;
+ --mint:#dcfce7;--text:#102a1b;--muted:#668070;--line:#dcece1;
+ --danger:#dc2626;--warning:#f59e0b;--blue:#2563eb;--purple:#7c3aed;
+ --shadow:0 10px 30px rgba(20,83,45,.08);--radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:
+ radial-gradient(circle at 10% 10%,#dcfce7 0,transparent 30%),
+ radial-gradient(circle at 90% 90%,#bbf7d0 0,transparent 25%),var(--bg)}
+.login-card{width:min(1050px,100%);display:grid;grid-template-columns:1.15fr .85fr;background:#fff;border:1px solid var(--line);border-radius:28px;box-shadow:0 30px 80px rgba(20,83,45,.14);overflow:hidden}
+.login-hero{padding:54px;background:linear-gradient(145deg,#14532d,#166534);color:#fff;position:relative;overflow:hidden}
+.login-hero:after{content:"";position:absolute;width:340px;height:340px;border:70px solid rgba(255,255,255,.06);border-radius:50%;right:-130px;bottom:-130px}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:20px}
+.logo-mark{width:42px;height:42px;border-radius:13px;background:#fff;color:var(--green);display:grid;place-items:center;font-size:20px}
+.login-hero h1{font-size:46px;line-height:1.05;margin:70px 0 18px;max-width:560px}
+.login-hero p{color:#d1fae5;line-height:1.7;max-width:540px}
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);font-size:12px}
+.login-form{padding:54px;display:flex;flex-direction:column;justify-content:center}
+.login-form h2{margin:0 0 8px;font-size:28px}
+.login-form .sub{color:var(--muted);margin-bottom:28px}
+.field{margin-bottom:15px}
+label{display:block;font-size:12px;font-weight:700;margin-bottom:7px;color:#456052}
+input,select,textarea{width:100%;border:1px solid var(--line);background:#fbfefc;color:var(--text);padding:12px 13px;border-radius:11px;outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(34,197,94,.12)}
+textarea{min-height:100px;resize:vertical}
+.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:#15803d}
+.btn-light{background:var(--mint);color:var(--dark)}
+.btn-outline{background:#fff;border:1px solid var(--line);color:var(--dark)}
+.btn-danger{background:#fee2e2;color:#991b1b}.btn-warning{background:#fef3c7;color:#92400e}
+.btn-block{width:100%}
+.demo-note{margin-top:15px;background:#f0fdf4;padding:12px;border-radius:11px;font-size:12px;color:var(--dark)}
+.app{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:#fff;border-right:1px solid var(--line);padding:20px 14px;z-index:50;overflow:auto}
+.sidebar .brand{padding:8px 10px 24px}
+.nav-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#91a39a;font-weight:800;padding:15px 12px 8px}
+.nav-item{width:100%;border:0;background:transparent;color:#597065;padding:11px 12px;border-radius:10px;text-align:left;display:flex;align-items:center;gap:11px;margin:2px 0;font-size:13px;font-weight:600}
+.nav-item i{width:18px;text-align:center}
+.nav-item:hover,.nav-item.active{background:var(--mint);color:var(--dark)}
+.main{margin-left:255px}
+.topbar{height:72px;background:rgba(255,255,255,.92);backdrop-filter:blur(15px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 25px;position:sticky;top:0;z-index:40}
+.mobile-menu{display:none}
+.global-search{flex:1;max-width:520px;position:relative}
+.global-search i{position:absolute;left:13px;top:13px;color:#9aada2}.global-search input{padding-left:38px;background:#f5faf6}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:9px}
+.icon-btn{width:39px;height:39px;border:1px solid var(--line);background:#fff;border-radius:10px;color:#557064;position:relative}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:800}
+.badge-green{background:var(--mint);color:var(--dark)}.badge-red{background:#fee2e2;color:#991b1b}.badge-yellow{background:#fef3c7;color:#92400e}.badge-blue{background:#dbeafe;color:#1d4ed8}
+.content{padding:26px}
+.page{display:none}.page.active{display:block}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:22px}
+.page-head h1{margin:0;font-size:25px}.page-head p{margin:7px 0 0;color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:19px}
+.grid{display:grid;gap:16px}.grid-4{grid-template-columns:repeat(4,1fr)}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:repeat(2,1fr)}
+.kpi{position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;background:var(--mint);right:-35px;top:-35px}
+.kpi-top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.kpi-icon{width:38px;height:38px;border-radius:11px;background:var(--mint);color:var(--green);display:grid;place-items:center}.kpi-value{font-size:26px;font-weight:800;margin:15px 0 4px}.kpi-label{font-size:12px;color:var(--muted)}.trend{font-size:11px;color:var(--green);font-weight:700}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.section-title h3{font-size:15px;margin:0}.section-title span{font-size:11px;color:var(--muted)}
+.chart-card{min-height:300px}.chart-wrap{height:235px;position:relative}
+.case-strip{display:flex;gap:10px;overflow:auto;padding-bottom:4px}.case-chip{min-width:190px;border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;text-align:left}.case-chip.active{border-color:var(--green2);background:#f0fdf4}.case-chip strong{font-size:12px}.case-chip small{display:block;color:var(--muted);margin-top:5px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.toolbar .grow{flex:1;min-width:180px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px}
+table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{padding:11px 12px;border-bottom:1px solid #edf4ef;text-align:left;font-size:11px;white-space:nowrap}th{background:#f7fbf8;color:#60766a;font-size:10px;text-transform:uppercase;letter-spacing:.5px}tr:hover td{background:#fbfefc}
+.address{font-family:ui-monospace,monospace;color:#166534}.risk{font-weight:800}.risk-low{color:#15803d}.risk-medium{color:#b45309}.risk-high{color:#dc2626}.risk-critical{color:#991b1b}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.mini-stat{background:#f7fbf8;border:1px solid var(--line);border-radius:12px;padding:12px}.mini-stat b{font-size:18px;display:block}.mini-stat span{font-size:10px;color:var(--muted)}
+.wallet-hero{display:grid;grid-template-columns:1.5fr .5fr;gap:16px}.wallet-id{font-family:ui-monospace,monospace;font-size:13px;word-break:break-all;background:#f7fbf8;border:1px solid var(--line);padding:12px;border-radius:10px}.score-ring{width:145px;height:145px;border-radius:50%;margin:auto;background:conic-gradient(var(--green) calc(var(--score)*1%),#e8f3eb 0);display:grid;place-items:center;position:relative}.score-ring:after{content:"";position:absolute;inset:12px;background:#fff;border-radius:50%}.score-number{position:relative;z-index:1;text-align:center}.score-number b{font-size:30px;display:block}.score-number span{font-size:10px;color:var(--muted)}
+.risk-bars{display:grid;gap:10px}.risk-line{display:grid;grid-template-columns:150px 1fr 40px;gap:10px;align-items:center;font-size:11px}.bar{height:8px;background:#edf5ef;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green);border-radius:10px}
+.graph-layout{display:grid;grid-template-columns:1fr 290px;gap:15px}.graph-box{height:560px;border:1px solid var(--line);border-radius:14px;background:#fbfefc;position:relative}.graph-legend{position:absolute;left:12px;bottom:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;z-index:5;font-size:10px;display:grid;gap:6px}.legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.node-panel{font-size:12px}.node-panel .empty{color:var(--muted);line-height:1.6}.detail-list{display:grid;gap:9px}.detail{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #edf4ef;padding-bottom:7px}.detail span{color:var(--muted);font-size:11px}.detail b{text-align:right;font-size:11px}
+.timeline{display:grid;gap:0}.time-item{display:grid;grid-template-columns:24px 1fr;gap:12px;min-height:65px}.time-line{position:relative}.time-line:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--green);display:block;margin-top:4px}.time-line:after{content:"";position:absolute;left:4px;top:15px;bottom:-3px;width:2px;background:#d9eee0}.time-item:last-child .time-line:after{display:none}.time-content strong{font-size:12px}.time-content p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.alert-list{display:grid;gap:10px}.alert{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px}.alert-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#fee2e2;color:var(--danger)}.alert p{margin:3px 0 0;font-size:11px;color:var(--muted)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(6,28,14,.45);backdrop-filter:blur(5px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}.modal-backdrop.show{display:flex}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.2);padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h3{margin:0}.close{border:0;background:#f3f7f4;width:35px;height:35px;border-radius:9px}
+.toast-wrap{position:fixed;right:20px;bottom:20px;z-index:200;display:grid;gap:9px}.toast{background:#143c25;color:#fff;border-radius:12px;padding:12px 15px;box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:12px;min-width:250px;animation:slide .25s ease}
+@keyframes slide{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.report{font-size:12px;line-height:1.65}.report h2{color:var(--dark)}.report h3{margin-bottom:5px}.report-section{padding:13px 0;border-bottom:1px solid var(--line)}
+.search-results{position:absolute;top:48px;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:70;max-height:350px;overflow:auto}.search-result{padding:10px 12px;border-bottom:1px solid #edf4ef;cursor:pointer}.search-result:hover{background:#f0fdf4}.search-result small{display:block;color:var(--muted);margin-top:3px}
+.footer-note{font-size:10px;color:#789083;margin-top:15px}
+@media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr)}.stat-row{grid-template-columns:repeat(3,1fr)}.wallet-hero{grid-template-columns:1fr}.graph-layout{grid-template-columns:1fr}.sidebar{width:225px}.main{margin-left:225px}}
+@media(max-width:800px){.sidebar{transform:translateX(-100%);transition:.25s;width:270px}.sidebar.open{transform:none}.main{margin-left:0}.mobile-menu{display:block}.topbar{padding:0 14px}.content{padding:16px}.global-search{max-width:none}.top-actions .user-name{display:none}.form-grid{grid-template-columns:1fr}.grid-3,.grid-2{grid-template-columns:1fr}.login-card{grid-template-columns:1fr}.login-hero{padding:34px}.login-hero h1{font-size:34px;margin-top:45px}.login-form{padding:34px}.page-head{flex-direction:column}.stat-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.grid-4{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}.topbar{height:64px}.top-actions .badge{display:none}.content{padding:12px}.card{padding:14px}.page-head h1{font-size:21px}.graph-box{height:450px}}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section id="loginScreen" class="login">
+  <div class="login-card">
+    <div class="login-hero">
+      <div class="logo"><div class="logo-mark"><i class="fa-solid fa-shield-halved"></i></div>CyberPhix</div>
+      <h1>Blockchain Fraud Intelligence Platform</h1>
+      <p>Transform a reported cryptocurrency wallet into explainable investigation intelligence using transaction tracing, graph analytics, risk scoring and simulated VASP attribution.</p>
+      <div class="pills">
+        <span class="pill"><i class="fa-solid fa-link"></i> Multi-chain</span>
+        <span class="pill"><i class="fa-solid fa-diagram-project"></i> Graph Intelligence</span>
+        <span class="pill"><i class="fa-solid fa-brain"></i> AI Risk Engine</span>
+        <span class="pill"><i class="fa-solid fa-file-shield"></i> Evidence Reports</span>
+      </div>
+      <p style="margin-top:55px;font-size:11px"><strong>DEMO ENVIRONMENT</strong> · SIH 2026 · Problem Statement 26183</p>
+    </div>
+    <div class="login-form">
+      <h2>Investigator Login</h2>
+      <div class="sub">Sign in to access the CyberPhix investigation workspace.</div>
+      <div class="field"><label>Investigator ID</label><input id="loginId" value="investigator01" autocomplete="username"></div>
+      <div class="field"><label>Password</label><input id="loginPassword" type="password" value="cyberphix123" autocomplete="current-password"></div>
+      <button class="btn btn-primary btn-block" id="loginBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</button>
+      <button class="btn btn-light btn-block" id="demoLoginBtn" style="margin-top:9px"><i class="fa-solid fa-wand-magic-sparkles"></i> Enter Demo Workspace</button>
+      <div class="demo-note"><strong>Demo credentials:</strong> investigator01 / cyberphix123<br>All blockchain intelligence displayed in this prototype is simulated.</div>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="app" class="app">
+  <aside id="sidebar" class="sidebar">
+    <div class="brand">
+      <div class="logo"><div class="logo-mark" style="background:var(--dark);color:#fff"><i class="fa-solid fa-shield-halved"></i></div>CyberPhix</div>
+    </div>
+    <div class="nav-title">Investigation</div>
+    <button class="nav-item active" data-page="overview"><i class="fa-solid fa-chart-pie"></i>Overview</button>
+    <button class="nav-item" data-page="reports"><i class="fa-solid fa-file-circle-exclamation"></i>Victim Reports</button>
+    <button class="nav-item" data-page="wallet"><i class="fa-solid fa-wallet"></i>Wallet Investigation</button>
+<button class="nav-item" data-page="investigation"><i class="fa-solid fa-magnifying-glass-chart"></i>Investigation Intelligence</button>
+    <button class="nav-item" data-page="transactions"><i class="fa-solid fa-right-left"></i>Transactions</button>
+    <button class="nav-item" data-page="graph"><i class="fa-solid fa-diagram-project"></i>Fund Flow Graph</button>
+    <button class="nav-item" data-page="risk"><i class="fa-solid fa-gauge-high"></i>Risk Analysis</button>
+    <button class="nav-item" data-page="vasp"><i class="fa-solid fa-building-columns"></i>Exchange / VASP</button>
+    <button class="nav-item" data-page="crosschain"><i class="fa-solid fa-shuffle"></i>Cross-Chain</button>
+    <button class="nav-item" data-page="suspicious"><i class="fa-solid fa-user-secret"></i>Suspicious Wallets</button>
+    <div class="nav-title">Operations</div>
+    <button class="nav-item" data-page="alerts"><i class="fa-solid fa-bell"></i>Alerts <span id="navAlertCount" class="badge badge-red" style="margin-left:auto">0</span></button>
+    <button class="nav-item" data-page="investigationReport"><i class="fa-solid fa-file-lines"></i>Investigation Report</button>
+    <button class="nav-item" data-page="analytics"><i class="fa-solid fa-chart-line"></i>Analytics</button>
+    <button class="nav-item" data-page="audit"><i class="fa-solid fa-clock-rotate-left"></i>Audit Trail</button>
+    <div class="nav-title">System</div>
+    <button class="nav-item" data-page="settings"><i class="fa-solid fa-gear"></i>Settings</button>
+    <div class="footer-note">CyberPhix · SIH 2026<br>Blockchain & Cybersecurity</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button id="mobileMenu" class="icon-btn mobile-menu"><i class="fa-solid fa-bars"></i></button>
+      <div class="global-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="globalSearch" placeholder="Search wallet, transaction, case, entity...">
+        <div id="searchResults" class="search-results hidden"></div>
+      </div>
+      <div class="top-actions">
+        <span class="badge badge-green"><i class="fa-solid fa-circle"></i> DEMO MODE</span>
+        <span class="badge badge-blue"><i class="fa-solid fa-hand-pointer"></i> ON-DEMAND ANALYSIS</span>
+        <button id="notificationBtn" class="icon-btn"><i class="fa-solid fa-bell"></i><span id="topAlertCount" class="badge badge-red" style="position:absolute;right:-5px;top:-5px;padding:3px 6px">0</span></button>
+        <button id="profileBtn" class="btn btn-light user-name"><i class="fa-solid fa-user-shield"></i> Investigator</button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <section id="page-overview" class="page active">
+        <div class="page-head">
+          <div><h1>Investigation Overview</h1><p>On-demand command center. Enter a wallet address to generate investigation intelligence.</p></div>
+          <div class="toolbar"><button class="btn btn-primary" data-page-jump="wallet"><i class="fa-solid fa-crosshairs"></i> Start Investigation</button></div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="section-title"><h3>Active Demo Investigations</h3><span>Select a case to refresh the workspace</span></div>
+          <div id="caseStrip" class="case-strip"></div>
+        </div>
+        <div id="kpis" class="grid grid-4"></div>
+        <div class="grid grid-2" style="margin-top:16px">
+          <div class="card chart-card"><div class="section-title"><h3>Risk Distribution</h3><span>Selected case</span></div><div class="chart-wrap"><canvas id="riskChart"></canvas></div></div>
+          <div class="card chart-card"><div class="section-title"><h3>Transaction Activity</h3><span>Last 7 periods</span></div><div class="chart-wrap"><canvas id="txChart"></canvas></div></div>
+          <div class="card chart-card"><div class="section-title"><h3>Fund Flow Volume</h3><span>Relative demo units</span></div><div class="chart-wrap"><canvas id="flowChart"></canvas></div></div>
+          <div class="card chart-card"><div class="section-title"><h3>Chain Distribution</h3><span>Selected case</span></div><div class="chart-wrap"><canvas id="chainChart"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="page-reports" class="page">
+        <div class="page-head"><div><h1>Victim Reports</h1><p>Register a reported suspect wallet and start an investigation.</p></div></div>
+        <div class="card">
+          <form id="reportForm" class="form-grid">
+            <div class="field"><label>Case ID</label><input id="caseId" placeholder="Auto-generated if empty"></div>
+            <div class="field"><label>Victim Name / Identifier</label><input id="victimName" required placeholder="Victim-001"></div>
+            <div class="field"><label>Contact</label><input id="victimContact" placeholder="Optional contact"></div>
+            <div class="field"><label>Suspect Wallet Address</label><input id="reportWallet" required placeholder="0x..."></div>
+            <div class="field"><label>Blockchain</label><select id="reportChain"><option>Ethereum</option><option>Bitcoin</option><option>Polygon</option><option>BNB Chain</option><option>Tron</option><option>Arbitrum</option><option>Other</option></select></div>
+            <div class="field"><label>Transaction Hash</label><input id="reportTx" placeholder="Optional hash"></div>
+            <div class="field"><label>Incident Date</label><input id="incidentDate" type="date"></div>
+            <div class="field"><label>Approximate Loss</label><input id="loss" type="number" min="0" placeholder="0"></div>
+            <div class="field"><label>Currency / Asset</label><input id="currency" value="USDT"></div>
+            <div class="field"><label>Priority</label><select id="priority"><option>Normal</option><option>High</option><option>Critical</option></select></div>
+            <div class="field full"><label>Description</label><textarea id="description" placeholder="Describe the reported incident..."></textarea></div>
+            <div class="field full"><label>Evidence / Notes</label><textarea id="evidence" placeholder="Hashes, screenshots, notes, or evidence references..."></textarea></div>
+            <div class="full toolbar"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Report</button><button class="btn btn-outline" type="button" id="clearReport">Clear</button><button class="btn btn-light" type="button" id="loadDemoReport">Load Demo Case</button></div>
+          </form>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="section-title"><h3>Registered Cases</h3><span>localStorage persisted</span></div><div id="caseTable"></div></div>
+      </section>
+
+      <!-- WALLET -->
+      <section id="page-wallet" class="page">
+        <div class="page-head"><div><h1>Wallet Investigation</h1><p>Enter a wallet address to load on-demand investigation intelligence. No live blockchain feed is used.</p></div></div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="toolbar">
+            <div class="grow"><input id="walletSearch" placeholder="Enter wallet address / wallet number"></div>
+            <select id="walletSelector" style="max-width:230px"></select>
+            <button class="btn btn-primary" id="investigateBtn"><i class="fa-solid fa-crosshairs"></i> Investigate</button>
+            <button class="btn btn-light" id="walletDemoBtn">Load Demo Wallet</button>
+            <button class="btn btn-outline" id="walletClearBtn">Clear</button>
+          </div>
+        </div>
+        <div id="walletPanel"></div>
+      </section>
+
+
+      <!-- INVESTIGATION INTELLIGENCE -->
+      <section id="page-investigation" class="page">
+        <div class="page-head">
+          <div>
+            <h1>Investigation Intelligence</h1>
+            <p>Graphical, explainable wallet investigation generated only after a wallet is submitted.</p>
+          </div>
+          <div class="toolbar">
+            <span class="badge badge-blue"><i class="fa-solid fa-database"></i> ON-DEMAND DATA</span>
+            <button class="btn btn-primary" id="investigateAgain"><i class="fa-solid fa-magnifying-glass-chart"></i> Investigate Wallet</button>
+          </div>
+        </div>
+        <div id="investigationPanel"></div>
+      </section>
+
+      <!-- TRANSACTIONS -->
+      <section id="page-transactions" class="page">
+        <div class="page-head"><div><h1>Transaction Analysis</h1><p>Search, filter and inspect transaction-level evidence.</p></div><button class="btn btn-light" id="exportTxCsv"><i class="fa-solid fa-file-csv"></i> Export CSV</button></div>
+        <div class="card">
+          <div class="toolbar">
+            <div class="grow"><input id="txSearch" placeholder="Search hash, wallet or pattern"></div>
+            <select id="txChainFilter"><option value="">All Chains</option></select>
+            <select id="txRiskFilter"><option value="">All Risk</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+            <select id="txDirFilter"><option value="">All Directions</option><option>Incoming</option><option>Outgoing</option></select>
+          </div>
+          <div id="txTable" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <!-- GRAPH -->
+      <section id="page-graph" class="page">
+        <div class="page-head"><div><h1>Fund Flow Graph</h1><p>Interactive wallet relationship and transaction path visualization.</p></div></div>
+        <div class="card" style="margin-bottom:15px">
+          <div class="toolbar">
+            <label style="margin:0;display:flex;align-items:center;gap:8px">Trace Depth
+              <select id="hopSelect" style="width:130px"><option value="1">1 Hop</option><option value="2">2 Hops</option><option value="3" selected>3 Hops</option><option value="5">5 Hops</option><option value="99">All</option></select>
+            </label>
+            <button class="btn btn-light" id="graphReset"><i class="fa-solid fa-arrows-to-circle"></i> Reset</button>
+            <button class="btn btn-outline" id="highlightRisk"><i class="fa-solid fa-bullseye"></i> Highlight High Risk</button>
+            <button class="btn btn-outline" id="fitGraph"><i class="fa-solid fa-expand"></i> Fit</button>
+            <span id="traceSummary" class="badge badge-green"></span>
+          </div>
+        </div>
+        <div class="graph-layout">
+          <div class="graph-box" id="cy">
+            <div class="graph-legend">
+              <span><i class="legend-dot" style="background:#2563eb"></i>Victim</span>
+              <span><i class="legend-dot" style="background:#dc2626"></i>Suspect</span>
+              <span><i class="legend-dot" style="background:#f59e0b"></i>Intermediary</span>
+              <span><i class="legend-dot" style="background:#7c3aed"></i>Bridge/DeFi</span>
+              <span><i class="legend-dot" style="background:#16a34a"></i>Exchange</span>
+            </div>
+          </div>
+          <div class="card node-panel"><div class="section-title"><h3>Node Intelligence</h3></div><div id="nodeDetails" class="empty">Select a graph node to inspect its intelligence.</div></div>
+        </div>
+      </section>
+
+      <!-- RISK -->
+      <section id="page-risk" class="page">
+        <div class="page-head"><div><h1>AI / ML Risk Engine</h1><p>Explainable simulated scoring based on transaction behavior and graph signals.</p></div><button class="btn btn-primary" id="recalculateRisk"><i class="fa-solid fa-rotate"></i> Recalculate</button></div>
+        <div id="riskPanel"></div>
+      </section>
+
+      <!-- VASP -->
+      <section id="page-vasp" class="page">
+        <div class="page-head"><div><h1>Exchange / VASP Attribution</h1><p>Confidence-ranked simulated entity intelligence. Not a real-world attribution.</p></div></div>
+        <div class="card" style="margin-bottom:15px;background:#f0fdf4"><strong><i class="fa-solid fa-triangle-exclamation"></i> Probable Demo Attribution</strong><p style="font-size:11px;color:var(--muted);margin:6px 0 0">Entity names and confidence values are simulated for demonstration. They must not be treated as factual identification.</p></div>
+        <div id="vaspPanel" class="grid grid-3"></div>
+      </section>
+
+      <!-- CROSS CHAIN -->
+      <section id="page-crosschain" class="page">
+        <div class="page-head"><div><h1>Cross-Chain Analysis</h1><p>Identify movement between supported networks and bridges.</p></div></div>
+        <div id="chainTable" class="card"></div>
+        <div class="card" style="margin-top:16px"><div class="section-title"><h3>Cross-Chain Flow</h3><span>Demo relationship</span></div><div id="crossFlow" style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:35px"></div></div>
+      </section>
+
+      <!-- SUSPICIOUS -->
+      <section id="page-suspicious" class="page">
+        <div class="page-head"><div><h1>Suspicious Wallet Directory</h1><p>Prioritize wallets requiring further investigation.</p></div></div>
+        <div class="card"><div class="toolbar"><div class="grow"><input id="susSearch" placeholder="Search suspicious wallet, pattern or case"></div><select id="susRisk"><option value="">All Risk</option><option>High</option><option>Critical</option><option>Medium</option></select></div><div id="susTable" class="table-wrap"></div></div>
+      </section>
+
+      <!-- ALERTS -->
+      <section id="page-alerts" class="page">
+        <div class="page-head"><div><h1>Alert Center</h1><p>Stored investigation alerts generated by on-demand analysis.</p></div><div class="toolbar"><button class="btn btn-outline" id="liveToggle"><i class="fa-solid fa-satellite-dish"></i> Toggle Simulated Live Monitoring</button><button class="btn btn-light" id="markAllRead">Mark All Read</button></div></div>
+        <div class="card"><div id="alertList" class="alert-list"></div></div>
+      </section>
+
+      <!-- REPORT -->
+      <section id="page-investigationReport" class="page">
+        <div class="page-head"><div><h1>Investigation Report</h1><p>Generate an evidence-backed, demo investigation summary.</p></div><div class="toolbar"><button class="btn btn-primary" id="generateReport"><i class="fa-solid fa-file-circle-check"></i> Generate Report</button><button class="btn btn-light" id="downloadPdf">PDF</button><button class="btn btn-outline" id="printReport">Print</button></div></div>
+        <div class="card"><div id="reportPreview" class="report"></div></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="page-analytics" class="page">
+        <div class="page-head"><div><h1>Analytics</h1><p>Investigation performance and intelligence indicators.</p></div></div>
+        <div id="analyticsCards" class="grid grid-4"></div>
+        <div class="grid grid-2" style="margin-top:16px">
+          <div class="card chart-card"><div class="section-title"><h3>Risk Trend</h3></div><div class="chart-wrap"><canvas id="analyticsRisk"></canvas></div></div>
+          <div class="card chart-card"><div class="section-title"><h3>Activity Volume</h3></div><div class="chart-wrap"><canvas id="analyticsActivity"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- AUDIT -->
+      <section id="page-audit" class="page">
+        <div class="page-head"><div><h1>Audit Trail</h1><p>Every major investigation action is recorded locally.</p></div><button class="btn btn-outline" id="clearAudit">Clear Local Audit</button></div>
+        <div class="card"><div id="auditTable" class="table-wrap"></div></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="page-settings" class="page">
+        <div class="page-head"><div><h1>Settings</h1><p>Demo configuration. Live blockchain feeds are disabled in this prototype.</p></div></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title"><h3>API Configuration</h3><span>Disabled live feeds</span></div>
+            <div class="field"><label>Ethereum API / RPC</label><input id="apiEth" type="password" placeholder="Leave empty for demo"></div>
+            <div class="field"><label>Polygon API / RPC</label><input id="apiPolygon" type="password"></div>
+            <div class="field"><label>BNB Chain API / RPC</label><input id="apiBsc" type="password"></div>
+            <div class="field"><label>Bitcoin API</label><input id="apiBtc" type="password"></div>
+            <div class="field"><label>Tron API</label><input id="apiTron" type="password"></div>
+            <button class="btn btn-primary" id="saveSettings">Save Configuration</button>
+          </div>
+          <div class="card">
+            <div class="section-title"><h3>Security & Privacy</h3></div>
+            <div class="detail-list">
+              <div class="detail"><span>Input validation</span><b class="risk-low">Enabled</b></div>
+              <div class="detail"><span>Audit logging</span><b class="risk-low">Enabled</b></div>
+              <div class="detail"><span>Private keys</span><b>Never required</b></div>
+              <div class="detail"><span>Wallet signing</span><b>Disabled</b></div>
+              <div class="detail"><span>Crypto transfers</span><b>Disabled</b></div>
+              <div class="detail"><span>Demo data isolation</span><b class="risk-low">Enabled</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px;background:#f0fdf4"><strong>DEMO DATA NOTICE</strong><p style="font-size:11px;color:var(--muted)">All wallets, transactions, entity names and intelligence in this prototype are fictional/simulated. Connect a secure backend and validated blockchain data source before any operational use.</p></div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop">
+  <div class="modal"><div class="modal-head"><h3 id="modalTitle">Details</h3><button class="close" id="modalClose"><i class="fa-solid fa-xmark"></i></button></div><div id="modalBody"></div></div>
+</div>
+<div id="toastWrap" class="toast-wrap"></div>
+
+<script>
+/* =========================================================
+   CYBERPHIX DEMO APPLICATION
+   SIH 2026 | Problem Statement 26183
+   Demo-only blockchain intelligence.
+   ========================================================= */
+
+const API_CONFIG={ethereum:"",polygon:"",bsc:"",bitcoin:"",tron:""};
+const STORAGE={
+ cases:"cyberphix_cases",audit:"cyberphix_audit",alerts:"cyberphix_alerts",
+ settings:"cyberphix_settings"
+};
+
+const chains=["Ethereum","Bitcoin","Polygon","BNB Chain","Tron","Arbitrum"];
+
+function txHash(seed){return "0x"+seed.repeat(8).slice(0,64)}
+function wallet(seed){return "0x"+seed.repeat(8).slice(0,40)}
+
+const demoCases=[
+ {id:"CASE-26183-001",victim:"Victim-Alpha",wallet:wallet("7A91F"),chain:"Ethereum",risk:76,confidence:91,priority:"High",loss:12500,txCount:18,hops:3,cross:true,vasp:"Demo Exchange Alpha",first:"2026-08-12",last:"2026-09-07",pattern:"Rapid movement + exchange deposit pattern"},
+ {id:"CASE-26183-002",victim:"Victim-Beta",wallet:wallet("42B7C"),chain:"Ethereum",risk:48,confidence:76,priority:"Normal",loss:4200,txCount:9,hops:2,cross:false,vasp:"Demo VASP Gamma",first:"2026-07-18",last:"2026-08-29",pattern:"Fan-out behavior"},
+ {id:"CASE-26183-003",victim:"Victim-Gamma",wallet:wallet("912DE"),chain:"Polygon",risk:94,confidence:96,priority:"Critical",loss:48600,txCount:31,hops:5,cross:true,vasp:"Demo Exchange Beta",first:"2026-08-01",last:"2026-09-08",pattern:"Cross-chain + rapid movement + bridge"},
+ {id:"CASE-26183-004",victim:"Victim-Delta",wallet:wallet("558AF"),chain:"BNB Chain",risk:83,confidence:88,priority:"High",loss:18200,txCount:22,hops:3,cross:true,vasp:"Demo Broker Delta",first:"2026-08-10",last:"2026-09-05",pattern:"Structuring + related-wallet fan-in"},
+ {id:"CASE-26183-005",victim:"Victim-Epsilon",wallet:wallet("AB421"),chain:"Tron",risk:24,confidence:64,priority:"Normal",loss:900,txCount:5,hops:1,cross:false,vasp:"No strong candidate",first:"2026-06-11",last:"2026-07-20",pattern:"Low-frequency activity"},
+ {id:"CASE-26183-006",victim:"Victim-Zeta",wallet:wallet("389DA"),chain:"Ethereum",risk:88,confidence:93,priority:"High",loss:31500,txCount:27,hops:5,cross:true,vasp:"Demo Exchange Alpha",first:"2026-08-22",last:"2026-09-08",pattern:"Multiple suspicious destinations"}
+];
+
+const demoEntities=[
+ {name:"Demo Exchange Alpha",type:"Exchange / VASP",chain:"Ethereum",confidence:91,evidence:"Exchange-like deposit pattern; repeated inbound clustering",risk:"High",wallets:4,last:"2026-09-08"},
+ {name:"Demo Exchange Beta",type:"Exchange / VASP",chain:"Polygon",confidence:86,evidence:"Bridge destination + clustered deposits",risk:"High",wallets:3,last:"2026-09-07"},
+ {name:"Demo VASP Gamma",type:"VASP",chain:"Ethereum",confidence:72,evidence:"Fan-in behavior with repeated destination",risk:"Medium",wallets:2,last:"2026-08-29"},
+ {name:"Demo Broker Delta",type:"Broker / Service",chain:"BNB Chain",confidence:61,evidence:"Structuring and repeated small deposits",risk:"Medium",wallets:2,last:"2026-09-05"}
+];
+
+let demoTransactions=[];
+demoCases.forEach((c,ci)=>{
+ const patterns=["Rapid movement","Exchange deposit pattern","Fan-out","Structuring","Bridge transfer","Related-wallet fan-in","Round-trip movement"];
+ for(let i=0;i<c.txCount;i++){
+   const outgoing=i%3!==0;
+   const r=c.risk>=85?(i%4===0?"Critical":"High"):c.risk>=60?(i%3===0?"High":"Medium"):(i%4===0?"Medium":"Low");
+   demoTransactions.push({
+    id:"TX-"+c.id.slice(-3)+"-"+String(i+1).padStart(3,"0"),
+    hash:txHash((ci+1).toString(16)+((i+3)%15).toString(16)),
+    caseId:c.id,chain:c.chain,
+    from:outgoing?c.wallet:wallet("VICT"+ci+i),
+    to:outgoing?wallet("INT"+ci+i):c.wallet,
+    amount:Math.round((120+i*47)*(1+(ci*.4))*100)/100,
+    asset:c.chain==="Tron"?"USDT":"ETH",
+    direction:outgoing?"Outgoing":"Incoming",
+    status:"Confirmed",risk:r,hop:Math.min(c.hops,1+(i%5)),
+    pattern:patterns[(i+ci)%patterns.length],
+    date:"2026-"+String(8+(i%2)).padStart(2,"0")+"-"+String(1+(i%27)).padStart(2,"0")+"T"+String(8+(i%12)).padStart(2,"0")+":2"+(i%10)+":00Z",
+    gas:(0.001+(i%4)*.0007).toFixed(4),block:19000000+ci*1000+i
+   });
+ }
+});
+
+const demoWallets=demoCases.map(c=>({
+ address:c.wallet,caseId:c.id,chain:c.chain,risk:c.risk,confidence:c.confidence,
+ tx:c.txCount,incoming:Math.ceil(c.txCount/3),outgoing:c.txCount-Math.ceil(c.txCount/3),
+ received:Math.round(c.loss*1.12),sent:Math.round(c.loss*.96),balance:Math.round(c.loss*.04),
+ counterparties:Math.max(3,c.txCount-2),hops:c.hops,cross:c.cross,vasp:c.vasp
+}));
+
+const graphTemplates={};
+demoCases.forEach((c,idx)=>{
+ const n=[
+  {id:"victim",label:"Victim Wallet",type:"victim",address:wallet("VICTIM"+idx),risk:20,chain:c.chain},
+  {id:"suspect",label:"Suspect Wallet",type:"suspect",address:c.wallet,risk:c.risk,chain:c.chain},
+  {id:"int1",label:"Intermediary 1",type:"intermediary",address:wallet("INTA"+idx),risk:Math.max(50,c.risk-8),chain:c.chain},
+  {id:"int2",label:"Intermediary 2",type:"intermediary",address:wallet("INTB"+idx),risk:Math.max(55,c.risk-3),chain:c.chain},
+  {id:"bridge",label:c.cross?"Bridge":"DeFi Protocol",type:c.cross?"bridge":"defi",address:wallet("BRIDGE"+idx),risk:c.cross?82:58,chain:c.chain},
+  {id:"exchange",label:c.vasp,type:"exchange",address:wallet("EXCH"+idx),risk:Math.max(55,c.risk-2),chain:c.chain}
+ ];
+ const e=[
+  {data:{id:"e1",source:"victim",target:"suspect",label:"Reported transfer"}},
+  {data:{id:"e2",source:"suspect",target:"int1",label:"Fund movement"}},
+  {data:{id:"e3",source:"int1",target:"int2",label:"Intermediary transfer"}},
+  {data:{id:"e4",source:"int2",target:"bridge",label:c.cross?"Cross-chain bridge":"Protocol interaction"}},
+  {data:{id:"e5",source:"bridge",target:"exchange",label:"Destination flow"}}
+ ];
+ graphTemplates[c.id]={nodes:n,edges:e};
+});
+
+let customCases=JSON.parse(localStorage.getItem(STORAGE.cases)||"[]");
+let allCases=[...demoCases,...customCases];
+let audit=JSON.parse(localStorage.getItem(STORAGE.audit)||"[]");
+let alerts=JSON.parse(localStorage.getItem(STORAGE.alerts)||"[]");
+if(!alerts.length){
+ alerts=[
+  {id:1,severity:"Critical",title:"Critical wallet detected",caseId:"CASE-26183-003",wallet:demoCases[2].wallet,description:"Cross-chain movement and bridge interaction detected.",read:false,time:"Demo dataset"},
+  {id:2,severity:"High",title:"Exchange deposit pattern",caseId:"CASE-26183-001",wallet:demoCases[0].wallet,description:"Repeated inbound clustering suggests an exchange-like destination.",read:false,time:"Demo dataset"},
+  {id:3,severity:"High",title:"Multiple suspicious destinations",caseId:"CASE-26183-006",wallet:demoCases[5].wallet,description:"Multiple suspicious destinations connected to the selected wallet.",read:false,time:"Demo dataset"}
+ ];
+ save(STORAGE.alerts,alerts);
+}
+
+let selectedCase=demoCases[0], selectedWallet=demoWallets[0], cy=null;
+const charts={};
+
+function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function short(v,n=10){v=String(v);return v.length>n*2?v.slice(0,n)+"…"+v.slice(-n):v}
+function riskClass(r){return "risk-"+String(r).toLowerCase()}
+function notify(msg){
+ const el=document.createElement("div");el.className="toast";el.innerHTML=`<i class="fa-solid fa-circle-check"></i> ${esc(msg)}`;
+ document.getElementById("toastWrap").appendChild(el);setTimeout(()=>el.remove(),3200)
+}
+function logAction(action,module="System",result="Success",caseId=selectedCase?.id||"—",walletAddr=selectedCase?.wallet||"—"){
+ audit.unshift({time:"Demo dataset",investigator:"investigator01",action,module,result,caseId,wallet:walletAddr});
+ audit=audit.slice(0,300);save(STORAGE.audit,audit);
+}
+function getTx(){return demoTransactions.filter(t=>t.caseId===selectedCase.id)}
+function getWallet(){return demoWallets.find(w=>w.caseId===selectedCase.id)}
+function scoreLabel(score){return score>=80?"Critical":score>=60?"High":score>=30?"Medium":"Low"}
+
+function login(){
+ const id=document.getElementById("loginId").value.trim(),pw=document.getElementById("loginPassword").value;
+ if((id==="investigator01"&&pw==="cyberphix123")||id==="demo"){
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").style.display="block";
+  logAction("Login","Authentication");
+  renderAll();notify("Welcome to the CyberPhix demo workspace");
+ }else notify("Invalid demo credentials")
+}
+document.getElementById("loginBtn").onclick=login;
+document.getElementById("demoLoginBtn").onclick=()=>{document.getElementById("loginId").value="demo";document.getElementById("loginPassword").value="demo";login()};
+
+function nav(page){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ const target=document.getElementById("page-"+page);if(target)target.classList.add("active");
+ document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+ document.getElementById("sidebar").classList.remove("open");
+ if(page==="graph")setTimeout(renderGraph,50);
+  if(page==="investigation")setTimeout(renderInvestigation,50);
+ if(page==="investigationReport")renderReport();
+ if(page==="audit")renderAudit();
+}
+document.querySelectorAll(".nav-item").forEach(n=>n.onclick=()=>nav(n.dataset.page));
+document.querySelectorAll("[data-page-jump]").forEach(b=>b.onclick=()=>nav(b.dataset.pageJump));
+document.getElementById("mobileMenu").onclick=()=>document.getElementById("sidebar").classList.toggle("open");
+
+function renderCases(){
+ const strip=document.getElementById("caseStrip");
+ strip.innerHTML=allCases.map(c=>`<button class="case-chip ${c.id===selectedCase.id?"active":""}" data-case="${esc(c.id)}">
+ <strong>${esc(c.id)}</strong><span class="badge ${c.risk>=80?"badge-red":c.risk>=60?"badge-yellow":"badge-green"}" style="float:right">${scoreLabel(c.risk)}</span>
+ <small>${esc(c.chain)} · ${esc(short(c.wallet,8))}</small></button>`).join("");
+ strip.querySelectorAll(".case-chip").forEach(b=>b.onclick=()=>selectCase(b.dataset.case));
+ document.getElementById("walletSelector").innerHTML=allCases.map(c=>`<option value="${esc(c.id)}" ${c.id===selectedCase.id?"selected":""}>${esc(c.id)} · ${esc(short(c.wallet,7))}</option>`).join("");
+ document.getElementById("caseTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Case</th><th>Victim</th><th>Wallet</th><th>Chain</th><th>Risk</th><th>Priority</th><th>Action</th></tr></thead><tbody>${allCases.map(c=>`<tr>
+ <td><b>${esc(c.id)}</b></td><td>${esc(c.victim)}</td><td class="address">${esc(short(c.wallet,10))}</td><td>${esc(c.chain)}</td><td class="risk ${riskClass(scoreLabel(c.risk))}">${c.risk} · ${scoreLabel(c.risk)}</td><td>${esc(c.priority)}</td><td><button class="btn btn-light" style="padding:7px 9px" onclick="selectCase('${esc(c.id)}');nav('wallet')">Open</button></td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function selectCase(id){
+ const found=allCases.find(c=>c.id===id);if(!found)return;
+ selectedCase=found;selectedWallet=getWallet()||makeWalletFromCase(found);
+ renderAll();logAction("Selected investigation","Case Management");notify("Investigation switched to "+id)
+}
+function makeWalletFromCase(c){
+ return {address:c.wallet,caseId:c.id,chain:c.chain,risk:c.risk,confidence:c.confidence,tx:c.txCount,incoming:Math.ceil(c.txCount/3),outgoing:c.txCount-Math.ceil(c.txCount/3),received:c.loss*1.1,sent:c.loss,balance:c.loss*.1,counterparties:c.txCount-2,hops:c.hops,cross:c.cross,vasp:c.vasp}
+}
+
+function renderKpis(){
+ const totalTx=getTx().length;
+ const k=[
+  ["Active Investigations",allCases.length,"fa-folder-open","+12%"],
+  ["Wallets Analyzed",allCases.length*3+4,"fa-wallet","+"+allCases.length],
+  ["Transactions Traced",totalTx,"fa-right-left","+8.4%"],
+  ["Suspicious Wallets",allCases.filter(c=>c.risk>=60).length+2,"fa-user-secret","+5"],
+  ["High-Risk Wallets",allCases.filter(c=>c.risk>=60).length,"fa-triangle-exclamation","+14%"],
+  ["Probable Exchanges",new Set(allCases.map(c=>c.vasp).filter(x=>x.includes("Demo"))).size,"fa-building-columns","+3"],
+  ["Cross-Chain Transfers",allCases.filter(c=>c.cross).length*3,"fa-shuffle","+9%"],
+  ["Alerts Stored",alerts.length,"fa-bell","On-demand"]
+ ];
+ document.getElementById("kpis").innerHTML=k.map(x=>`<div class="card kpi"><div class="kpi-top"><div class="kpi-icon"><i class="fa-solid ${x[2]}"></i></div><span class="trend">${x[3]}</span></div><div class="kpi-value">${x[1]}</div><div class="kpi-label">${x[0]}</div></div>`).join("");
+}
+
+function makeChart(id,type,labels,data,opts={}){
+ if(charts[id])charts[id].destroy();
+ const el=document.getElementById(id);if(!el)return;
+ charts[id]=new Chart(el,{type,data:{labels,datasets:[{label:opts.label||"",data,borderColor:"#16a34a",backgroundColor:type==="doughnut"?["#16a34a","#f59e0b","#dc2626","#991b1b"]: "rgba(22,163,74,.13)",fill:type==="line",tension:.35,borderWidth:2,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type==="doughnut",position:"bottom",labels:{font:{size:10}}}},scales:type==="doughnut"?{}:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{beginAtZero:true,grid:{color:"#edf4ef"},ticks:{font:{size:9}}}}}})
+}
+function renderCharts(){
+ makeChart("riskChart","doughnut",["Low","Medium","High","Critical"],[
+  allCases.filter(c=>c.risk<30).length,allCases.filter(c=>c.risk>=30&&c.risk<60).length,
+  allCases.filter(c=>c.risk>=60&&c.risk<80).length,allCases.filter(c=>c.risk>=80).length]);
+ makeChart("txChart","line",["P1","P2","P3","P4","P5","P6","P7"],Array.from({length:7},(_,i)=>Math.max(2,Math.round(getTx().length*(.35+i*.11)+(i%3)*2))));
+ makeChart("flowChart","bar",["Inbound","Intermediary","Bridge","Destination"],[selectedCase.loss*.2,selectedCase.loss*.46,selectedCase.cross?selectedCase.loss*.72:selectedCase.loss*.55,selectedCase.loss*.91],{label:"Relative volume"});
+ const counts=chains.map(ch=>getTx().filter(t=>t.chain===ch).length);
+ makeChart("chainChart","doughnut",chains,counts);
+}
+
+
+function walletSeed(address){
+  const s=String(address||"").replace(/\s+/g,"").toLowerCase();
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+  return (h>>>0);
+}
+
+function analyzeEnteredWallet(address){
+  const clean=String(address||"").trim();
+  if(!clean || clean.length<6) return null;
+
+  const known=allCases.find(c=>c.wallet.toLowerCase()===clean.toLowerCase());
+  if(known) return known;
+
+  const seed=walletSeed(clean);
+  const risk=25+(seed%70);
+  const confidence=62+(seed%34);
+  const txCount=6+(seed%24);
+  const hops=1+(seed%5);
+  const cross=(seed%3===0);
+  const loss=500+(seed%49000);
+  const chain=chains[seed%chains.length];
+  const patterns=[
+    "Rapid movement",
+    "Fan-in / fan-out",
+    "Repeated destination",
+    "Structuring pattern",
+    "Bridge interaction",
+    "Multiple suspicious destinations"
+  ];
+  const pattern=patterns[seed%patterns.length];
+  const c={
+    id:"ONDEMAND-"+String(seed).slice(-8),
+    victim:"Wallet Investigation",
+    wallet:clean,
+    chain,
+    risk,
+    confidence,
+    priority:risk>=80?"Critical":risk>=60?"High":"Normal",
+    loss,
+    txCount,
+    hops,
+    cross,
+    vasp:cross?"Demo Exchange Beta":"Demo VASP Gamma",
+    first:"On-demand analysis",
+    last:"On-demand analysis",
+    pattern
+  };
+  return c;
+}
+
+function buildInvestigationTransactions(c){
+  const existing=demoTransactions.filter(t=>t.caseId===c.id);
+  if(existing.length) return existing;
+
+  const seed=walletSeed(c.wallet);
+  const arr=[];
+  const patterns=["Rapid movement","Exchange deposit pattern","Fan-out","Structuring","Bridge transfer","Related-wallet fan-in","Round-trip movement"];
+  for(let i=0;i<c.txCount;i++){
+    const outgoing=i%3!==0;
+    const amount=Math.round((90+((seed+i*37)%900)) * 100)/100;
+    const r=c.risk>=85?(i%4===0?"Critical":"High"):c.risk>=60?(i%3===0?"High":"Medium"):(i%4===0?"Medium":"Low");
+    arr.push({
+      id:"OTX-"+String(seed).slice(-5)+"-"+String(i+1).padStart(3,"0"),
+      hash:"0x"+(seed.toString(16)+i.toString(16)).repeat(10).slice(0,64),
+      caseId:c.id,chain:c.chain,
+      from:outgoing?c.wallet:wallet("ONDEMANDFROM"+seed+i),
+      to:outgoing?wallet("ONDEMANDTO"+seed+i):c.wallet,
+      amount,asset:c.chain==="Tron"?"USDT":"ETH",
+      direction:outgoing?"Outgoing":"Incoming",status:"Demo analyzed",
+      risk:r,hop:Math.min(c.hops,1+(i%5)),
+      pattern:patterns[(i+seed)%patterns.length],
+      date:"On-demand dataset",
+      gas:"—",block:"—"
+    });
+  }
+  return arr;
+}
+
+function renderInvestigation(){
+  const panel=document.getElementById("investigationPanel");
+  if(!panel)return;
+  const c=selectedCase;
+  if(!c){
+    panel.innerHTML=`<div class="card investigation-empty"><i class="fa-solid fa-wallet"></i><h3>No wallet selected</h3><p>Enter a wallet address in Wallet Investigation and click Investigate.</p></div>`;
+    return;
+  }
+
+  const tx=buildInvestigationTransactions(c);
+  const incoming=tx.filter(t=>t.direction==="Incoming").length;
+  const outgoing=tx.filter(t=>t.direction==="Outgoing").length;
+  const counterparties=Math.max(2,new Set(tx.flatMap(t=>[t.from,t.to])).size-1);
+  const factorValues=[
+    ["Transaction frequency",Math.min(100,30+c.txCount*2)],
+    ["Transaction volume",Math.min(100,25+c.loss/650)],
+    ["Rapid fund movement",c.risk>50?86:28],
+    ["Intermediary exposure",Math.min(100,30+c.hops*15)],
+    ["Fan-in / Fan-out",c.risk>45?72:25],
+    ["Cross-chain movement",c.cross?91:18],
+    ["Exchange-like destination",c.risk>50?84:22],
+    ["Obfuscation / bridge",c.cross?78:25]
+  ];
+  const highFactors=factorValues.filter(x=>x[1]>=60).length;
+  const risk=c.risk;
+
+  panel.innerHTML=`
+    <div class="intel-note"><strong><i class="fa-solid fa-circle-info"></i> On-demand investigation:</strong>
+      This dashboard is generated only after a wallet is submitted. It does not stream, poll, or display live blockchain data. Unknown wallets use clearly labeled simulated demo intelligence.</div>
+
+    <div class="investigation-hero" style="margin-top:14px">
+      <div class="card">
+        <div class="section-title">
+          <h3><i class="fa-solid fa-wallet"></i> Wallet Under Investigation</h3>
+          <span class="badge ${risk>=80?"badge-red":risk>=60?"badge-yellow":"badge-green"}">${scoreLabel(risk)} Risk</span>
+        </div>
+        <div class="investigation-wallet">${esc(c.wallet)}</div>
+        <div class="intel-grid">
+          <div class="intel-card"><div class="intel-label">Risk Score</div><div class="intel-value">${risk}/100</div><div class="risk-meter"><i style="width:${risk}%"></i></div></div>
+          <div class="intel-card"><div class="intel-label">Confidence</div><div class="intel-value">${c.confidence}%</div><div class="intel-sub">Model confidence</div></div>
+          <div class="intel-card"><div class="intel-label">Transactions</div><div class="intel-value">${tx.length}</div><div class="intel-sub">${incoming} incoming · ${outgoing} outgoing</div></div>
+          <div class="intel-card"><div class="intel-label">Trace Depth</div><div class="intel-value">${c.hops}</div><div class="intel-sub">Wallet hops</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h3>Risk Summary</h3><span>Explainable</span></div>
+        <div class="score-ring" style="--score:${risk}"><div class="score-number"><b>${risk}</b><span>Risk score</span></div></div>
+        <div style="text-align:center;margin-top:10px"><span class="badge ${risk>=80?"badge-red":risk>=60?"badge-yellow":"badge-green"}">${scoreLabel(risk)}</span></div>
+        <div class="detail-list" style="margin-top:14px">
+          <div class="detail"><span>Priority</span><b>${esc(c.priority)}</b></div>
+          <div class="detail"><span>Chain</span><b>${esc(c.chain)}</b></div>
+          <div class="detail"><span>Cross-chain</span><b>${c.cross?"Detected":"Not detected"}</b></div>
+          <div class="detail"><span>High-risk factors</span><b>${highFactors}</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="card chart-card compact">
+        <div class="section-title"><h3>Risk Factor Profile</h3><span>Key indicators</span></div>
+        <div class="chart-wrap"><canvas id="investigationRiskChart"></canvas></div>
+      </div>
+      <div class="card chart-card compact">
+        <div class="section-title"><h3>Transaction Direction</h3><span>Analyzed wallet activity</span></div>
+        <div class="chart-wrap"><canvas id="investigationTxChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="card">
+        <div class="section-title"><h3>Important Risk Factors</h3><span>${factorValues.length} indicators</span></div>
+        <div class="risk-bars">
+          ${factorValues.map(f=>`<div class="risk-line"><span>${esc(f[0])}</span><div class="bar"><i style="width:${Math.round(f[1])}%"></i></div><b>${Math.round(f[1])}</b></div>`).join("")}
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h3>Investigation Findings</h3><span>Evidence summary</span></div>
+        ${[
+          ["Transaction pattern",c.pattern,risk>=60?"High":"Medium"],
+          ["Fund movement",`${c.loss.toLocaleString()} demo units estimated`,c.loss>20000?"High":"Medium"],
+          ["Intermediary exposure",`${c.hops} hop(s) detected`,c.hops>=4?"High":"Medium"],
+          ["Cross-chain activity",c.cross?"Bridge / cross-chain movement detected":"No cross-chain signal",c.cross?"High":"Low"],
+          ["Destination intelligence",c.vasp,c.risk>=60?"High":"Medium"]
+        ].map(x=>`<div class="finding"><div class="finding-icon"><i class="fa-solid fa-shield-halved"></i></div><div style="flex:1"><strong>${esc(x[0])}</strong><p>${esc(x[1])}</p></div><span class="severity-chip severity-${x[2].toLowerCase()}">${esc(x[2])}</span></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="card">
+        <div class="section-title"><h3>Investigation Graph</h3><span>Wallet → intermediaries → destination</span></div>
+        <div id="investigationGraph" class="graph-box" style="height:420px"></div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h3>Investigator Conclusion</h3><span>Demo decision support</span></div>
+        <div class="detail-list">
+          <div class="detail"><span>Overall classification</span><b class="risk ${riskClass(scoreLabel(risk))}">${scoreLabel(risk)} Risk</b></div>
+          <div class="detail"><span>Confidence</span><b>${c.confidence}%</b></div>
+          <div class="detail"><span>Primary pattern</span><b>${esc(c.pattern)}</b></div>
+          <div class="detail"><span>Counterparties</span><b>${counterparties}</b></div>
+          <div class="detail"><span>Estimated received</span><b>${Math.round(c.loss*1.12).toLocaleString()} demo units</b></div>
+          <div class="detail"><span>Estimated sent</span><b>${Math.round(c.loss*.96).toLocaleString()} demo units</b></div>
+        </div>
+        <div class="demo-note" style="margin-top:15px">
+          <strong>Recommended action:</strong>
+          ${risk>=80?"Prioritize investigator review, preserve evidence, and validate attribution before escalation.":
+            risk>=60?"Review transaction paths, counterparties and destination evidence before escalation.":
+            "Review the available evidence and collect additional context before classification."}
+        </div>
+      </div>
+    </div>
+  `;
+
+  makeChart("investigationRiskChart","bar",
+    factorValues.map(x=>x[0]),
+    factorValues.map(x=>Math.round(x[1])),
+    {label:"Risk factor score"});
+  makeChart("investigationTxChart","doughnut",["Incoming","Outgoing"],[incoming,outgoing]);
+
+  renderInvestigationGraph(c);
+}
+
+function renderInvestigationGraph(c){
+  const el=document.getElementById("investigationGraph");
+  if(!el)return;
+  if(window.investigationCy){window.investigationCy.destroy();window.investigationCy=null}
+  const nodes=[
+    {id:"wallet",label:"Wallet",type:"suspect",risk:c.risk,address:c.wallet},
+    {id:"i1",label:"Intermediary",type:"intermediary",risk:Math.max(45,c.risk-8),address:wallet("INVINT1"+walletSeed(c.wallet))},
+    {id:"i2",label:"Service / Bridge",type:c.cross?"bridge":"defi",risk:c.cross?82:58,address:wallet("INVBRIDGE"+walletSeed(c.wallet))},
+    {id:"dest",label:c.vasp,type:"exchange",risk:Math.max(50,c.risk-3),address:wallet("INVDEST"+walletSeed(c.wallet))}
+  ];
+  window.investigationCy=cytoscape({
+    container:el,
+    elements:[
+      ...nodes.map(n=>({data:n})),
+      {data:{id:"a1",source:"wallet",target:"i1",label:"Fund movement"}},
+      {data:{id:"a2",source:"i1",target:"i2",label:c.cross?"Bridge":"Protocol"}},
+      {data:{id:"a3",source:"i2",target:"dest",label:"Destination"}}
+    ],
+    layout:{name:"breadthfirst",directed:true,padding:45,spacingFactor:1.35},
+    style:[
+      {selector:"node",style:{"label":"data(label)","width":52,"height":52,"background-color":"#16a34a","color":"#102a1b","font-size":9,"text-valign":"bottom","text-margin-y":8,"border-width":2,"border-color":"#fff"}},
+      {selector:'node[type="suspect"]',style:{"background-color":"#dc2626","width":64,"height":64,"font-weight":"bold"}},
+      {selector:'node[type="intermediary"]',style:{"background-color":"#f59e0b"}},
+      {selector:'node[type="bridge"],node[type="defi"]',style:{"background-color":"#7c3aed"}},
+      {selector:'node[type="exchange"]',style:{"background-color":"#16a34a","width":64,"height":64}},
+      {selector:"edge",style:{"width":2,"line-color":"#9dc9aa","target-arrow-color":"#16a34a","target-arrow-shape":"triangle","curve-style":"bezier","label":"data(label)","font-size":7,"color":"#668070","text-background-color":"#fff","text-background-opacity":1,"text-background-padding":2}}
+    ]
+  });
+}
+
+function renderWallet(){
+ const w=getWallet()||makeWalletFromCase(selectedCase);selectedWallet=w;
+ const evidence=selectedCase.pattern.split(" + ");
+ document.getElementById("walletPanel").innerHTML=`
+ <div class="wallet-hero">
+  <div class="card">
+   <div class="section-title"><h3>${esc(selectedCase.id)} · ${esc(selectedCase.victim)}</h3><span class="badge ${selectedCase.risk>=80?"badge-red":selectedCase.risk>=60?"badge-yellow":"badge-green"}">${scoreLabel(selectedCase.risk)} Risk</span></div>
+   <div class="wallet-id">${esc(w.address)}</div>
+   <div class="stat-row" style="margin-top:15px">
+    <div class="mini-stat"><b>${esc(w.chain)}</b><span>Blockchain</span></div>
+    <div class="mini-stat"><b>${w.tx}</b><span>Transactions</span></div>
+    <div class="mini-stat"><b>${w.incoming}</b><span>Incoming</span></div>
+    <div class="mini-stat"><b>${w.outgoing}</b><span>Outgoing</span></div>
+    <div class="mini-stat"><b>${w.hops}</b><span>Trace Hops</span></div>
+   </div>
+   <div class="grid grid-2" style="margin-top:15px">
+    <div class="detail-list"><div class="detail"><span>First seen</span><b>${selectedCase.first}</b></div><div class="detail"><span>Recorded activity</span><b>${selectedCase.last}</b></div><div class="detail"><span>Total received</span><b>${w.received.toLocaleString()} units</b></div><div class="detail"><span>Total sent</span><b>${w.sent.toLocaleString()} units</b></div></div>
+    <div class="detail-list"><div class="detail"><span>Estimated balance</span><b>${w.balance.toLocaleString()} units</b></div><div class="detail"><span>Counterparties</span><b>${w.counterparties}</b></div><div class="detail"><span>Cross-chain</span><b>${w.cross?"Detected":"Not detected"}</b></div><div class="detail"><span>Probable VASP</span><b>${esc(w.vasp)}</b></div></div>
+   </div>
+   <button class="btn btn-primary" style="margin-top:15px" onclick="startInvestigation()"><i class="fa-solid fa-magnifying-glass-chart"></i> Investigate Wallet</button>
+  </div>
+  <div class="card" style="display:grid;place-items:center">
+   <div class="score-ring" style="--score:${w.risk}"><div class="score-number"><b>${w.risk}</b><span>Risk score</span></div></div>
+   <div style="text-align:center"><span class="badge badge-green">${w.confidence}% confidence</span><p style="font-size:11px;color:var(--muted)">DEMO / SIMULATED INTELLIGENCE</p></div>
+  </div>
+ </div>
+ <div class="grid grid-2" style="margin-top:16px">
+  <div class="card"><div class="section-title"><h3>Investigation Timeline</h3></div>${timelineHTML()}</div>
+  <div class="card"><div class="section-title"><h3>Detected Evidence</h3><span>${evidence.length} signals</span></div><div class="risk-bars">${evidence.map((e,i)=>`<div class="risk-line"><span>${esc(e)}</span><div class="bar"><i style="width:${Math.min(98,55+i*14+selectedCase.risk/5)}%"></i></div><b>${Math.min(98,55+i*14+Math.round(selectedCase.risk/5))}</b></div>`).join("")}</div></div>
+ </div>`;
+}
+function timelineHTML(){
+ const items=[
+  ["Victim Report","Reported suspect wallet entered into case "+selectedCase.id],
+  ["Suspect Wallet","Wallet activity indexed on "+selectedCase.chain],
+  ["Transaction Detection",getTx().length+" transactions reconstructed in demo dataset"],
+  ["Intermediary Discovery",selectedCase.hops+" hop(s) traversed"],
+  ["Suspicious Pattern",selectedCase.pattern],
+  ...(selectedCase.cross?[["Cross-Chain Movement","Bridge / cross-chain activity detected"]]:[]),
+  ["Exchange Candidate",selectedCase.vasp],
+  ["Risk Assessment",selectedCase.risk+" / 100 · "+scoreLabel(selectedCase.risk)],
+  ["Investigation Report","Evidence summary ready for export"]
+ ];
+ return `<div class="timeline">${items.map(x=>`<div class="time-item"><div class="time-line"></div><div class="time-content"><strong>${esc(x[0])}</strong><p>${esc(x[1])}</p></div></div>`).join("")}</div>`
+}
+
+function startInvestigation(){
+  const entered=(document.getElementById("walletSearch")?.value||"").trim();
+  if(entered){
+    const c=analyzeEnteredWallet(entered);
+    if(!c){notify("Enter a wallet address");return}
+    if(!allCases.some(x=>x.id===c.id)){
+      allCases=[...allCases,c];
+      selectedCase=c;
+      selectedWallet=makeWalletFromCase(c);
+    }else{
+      selectedCase=c;
+      selectedWallet=makeWalletFromCase(c);
+    }
+  }
+  logAction("Wallet investigated","Investigation Intelligence","Completed",selectedCase.id,selectedCase.wallet);
+  renderAll();
+  nav("investigation");
+  notify("On-demand wallet investigation completed");
+}
+
+
+document.getElementById("walletSelector").onchange=e=>selectCase(e.target.value);
+document.getElementById("investigateBtn").onclick=()=>{
+ const q=document.getElementById("walletSearch").value.trim().toLowerCase();
+ const c=allCases.find(x=>x.wallet.toLowerCase()===q||x.id.toLowerCase()===q||demoTransactions.some(t=>t.caseId===x.id&&t.hash.toLowerCase()===q));
+ if(c){selectCase(c.id);startInvestigation()}else notify("No matching demo wallet, case or transaction found")
+};
+document.getElementById("walletDemoBtn").onclick=()=>{selectCase(allCases[Math.floor(Math.random()*allCases.length)].id);nav("wallet")};
+document.getElementById("walletClearBtn").onclick=()=>document.getElementById("walletSearch").value="";
+
+function renderTransactions(){
+ const q=(document.getElementById("txSearch").value||"").toLowerCase(),chain=document.getElementById("txChainFilter").value,risk=document.getElementById("txRiskFilter").value,dir=document.getElementById("txDirFilter").value;
+ let tx=getTx().filter(t=>(!q||[t.hash,t.from,t.to,t.pattern].join(" ").toLowerCase().includes(q))&&(!chain||t.chain===chain)&&(!risk||t.risk===risk)&&(!dir||t.direction===dir));
+ document.getElementById("txTable").innerHTML=`<table><thead><tr><th>Date</th><th>Hash</th><th>From</th><th>To</th><th>Chain</th><th>Amount</th><th>Direction</th><th>Risk</th><th>Hop</th><th>Pattern</th><th></th></tr></thead><tbody>${tx.map(t=>`<tr>
+ <td>${esc(t.date.replace("T"," ").replace("Z",""))}</td><td class="address">${esc(short(t.hash,8))}</td><td class="address">${esc(short(t.from,7))}</td><td class="address">${esc(short(t.to,7))}</td><td>${esc(t.chain)}</td><td>${t.amount} ${esc(t.asset)}</td><td>${esc(t.direction)}</td><td class="risk ${riskClass(t.risk)}">${esc(t.risk)}</td><td>${t.hop}</td><td>${esc(t.pattern)}</td><td><button class="btn btn-light" style="padding:6px 8px" onclick="showTx('${esc(t.id)}')">View</button></td>
+ </tr>`).join("")||`<tr><td colspan="11" style="text-align:center;padding:30px;color:#789083">No transactions match your filters.</td></tr>`}</tbody></table>`;
+}
+["txSearch","txChainFilter","txRiskFilter","txDirFilter"].forEach(id=>document.getElementById(id).oninput=renderTransactions);
+document.getElementById("txChainFilter").innerHTML=`<option value="">All Chains</option>`+chains.map(c=>`<option>${c}</option>`).join("");
+function showTx(id){
+ const t=demoTransactions.find(x=>x.id===id);if(!t)return;
+ logAction("Viewed transaction","Transactions","Success",t.caseId,t.from);
+ openModal("Transaction Intelligence",`<div class="detail-list">
+ <div class="detail"><span>Transaction ID</span><b>${esc(t.id)}</b></div><div class="detail"><span>Full hash</span><b class="address">${esc(t.hash)}</b></div>
+ <div class="detail"><span>From</span><b class="address">${esc(t.from)}</b></div><div class="detail"><span>To</span><b class="address">${esc(t.to)}</b></div>
+ <div class="detail"><span>Amount</span><b>${t.amount} ${esc(t.asset)}</b></div><div class="detail"><span>Timestamp</span><b>${esc(t.date)}</b></div>
+ <div class="detail"><span>Chain</span><b>${esc(t.chain)}</b></div><div class="detail"><span>Gas/Fee</span><b>${t.gas}</b></div>
+ <div class="detail"><span>Block</span><b>${t.block}</b></div><div class="detail"><span>Risk</span><b class="risk ${riskClass(t.risk)}">${esc(t.risk)}</b></div>
+ <div class="detail"><span>Pattern</span><b>${esc(t.pattern)}</b></div></div>
+ <div class="demo-note" style="margin-top:15px">DEMO DATA — NOT LIVE FINANCIAL INTELLIGENCE</div>`)
+}
+
+function renderGraph(){
+ const container=document.getElementById("cy");if(!container)return;
+ const temp=graphTemplates[selectedCase.id];if(!temp)return;
+ const depth=Number(document.getElementById("hopSelect").value);
+ const allowedNodes=temp.nodes.filter((_,i)=>depth>=99||i<=Math.min(5,depth+1));
+ const allowedIds=new Set(allowedNodes.map(n=>n.id));
+ const elements=[
+  ...allowedNodes.map(n=>({data:{...n}})),
+  ...temp.edges.filter(e=>allowedIds.has(e.data.source)&&allowedIds.has(e.data.target))
+ ];
+ if(cy)cy.destroy();
+ cy=cytoscape({container,elements,layout:{name:"breadthfirst",directed:true,padding:45,spacingFactor:1.25},
+  style:[
+   {selector:"node",style:{"label":"data(label)","width":46,"height":46,"background-color":"#16a34a","color":"#102a1b","font-size":9,"text-valign":"bottom","text-margin-y":8,"border-width":2,"border-color":"#fff"}},
+   {selector:'node[type="victim"]',style:{"background-color":"#2563eb"}},
+   {selector:'node[type="suspect"]',style:{"background-color":"#dc2626","width":58,"height":58,"font-weight":"bold"}},
+   {selector:'node[type="intermediary"]',style:{"background-color":"#f59e0b"}},
+   {selector:'node[type="bridge"],node[type="defi"]',style:{"background-color":"#7c3aed"}},
+   {selector:'node[type="exchange"]',style:{"background-color":"#16a34a","width":58,"height":58}},
+   {selector:"edge",style:{"width":2,"line-color":"#9dc9aa","target-arrow-color":"#16a34a","target-arrow-shape":"triangle","curve-style":"bezier","label":"data(label)","font-size":7,"color":"#668070","text-background-color":"#fff","text-background-opacity":1,"text-background-padding":2}},
+   {selector:".highlight",style:{"border-color":"#dc2626","border-width":5}}
+  ]
+ });
+ cy.on("tap","node",e=>showNode(e.target.data()));
+ cy.ready(()=>{document.getElementById("traceSummary").textContent=`${Math.max(0,allowedNodes.length-2)} intermediary / service nodes · ${elements.filter(e=>e.data.source).length} paths`});
+}
+function showNode(n){
+ document.getElementById("nodeDetails").innerHTML=`<div class="detail-list">
+ <div class="detail"><span>Label</span><b>${esc(n.label)}</b></div><div class="detail"><span>Type</span><b>${esc(n.type)}</b></div>
+ <div class="detail"><span>Address</span><b class="address">${esc(n.address)}</b></div><div class="detail"><span>Chain</span><b>${esc(n.chain)}</b></div>
+ <div class="detail"><span>Risk</span><b class="risk ${riskClass(scoreLabel(n.risk))}">${n.risk} · ${scoreLabel(n.risk)}</b></div>
+ <div class="detail"><span>Connected wallets</span><b>${Math.max(2,Math.round(n.risk/20))}</b></div></div>
+ <div class="demo-note">Node intelligence is simulated for this prototype.</div>`;
+ logAction("Graph node inspected","Fund Flow Graph","Success",selectedCase.id,n.address)
+}
+document.getElementById("hopSelect").onchange=renderGraph;
+document.getElementById("graphReset").onclick=()=>{if(cy){cy.elements().removeClass("highlight");cy.fit()}}
+document.getElementById("fitGraph").onclick=()=>cy&&cy.fit();
+document.getElementById("highlightRisk").onclick=()=>{
+ if(!cy)return;cy.nodes().removeClass("highlight").filter(n=>Number(n.data("risk"))>=60).addClass("highlight");notify("High-risk nodes highlighted")
+};
+
+function renderRisk(){
+ const factors=[
+  ["Transaction frequency",Math.min(100,35+selectedCase.txCount*2),selectedCase.txCount>20?"High activity":"Moderate activity"],
+  ["Transaction volume",Math.min(100,30+selectedCase.loss/1000),selectedCase.loss>20000?"Large movement":"Moderate movement"],
+  ["Wallet age",selectedCase.risk>70?76:42,selectedCase.risk>70?"Short / suspicious activity window":"Longer activity window"],
+  ["Rapid fund movement",selectedCase.risk>50?86:28,selectedCase.risk>50?"Rapid movement observed":"No strong rapid-movement signal"],
+  ["Intermediary wallets",Math.min(100,35+selectedCase.hops*15),selectedCase.hops+" hop trace"],
+  ["Fan-in / fan-out",selectedCase.risk>45?72:25,selectedCase.risk>45?"Pattern detected":"Low signal"],
+  ["Cross-chain transfers",selectedCase.cross?91:18,selectedCase.cross?"Cross-chain movement detected":"No cross-chain signal"],
+  ["Exchange deposit pattern",selectedCase.risk>50?84:22,selectedCase.risk>50?"Destination resembles exchange-like pattern":"Weak destination signal"],
+  ["Obfuscation / bridge",selectedCase.cross?78:25,selectedCase.cross?"Bridge interaction":"No strong bridge signal"]
+ ];
+ document.getElementById("riskPanel").innerHTML=`
+ <div class="grid grid-3">
+  <div class="card" style="display:grid;place-items:center"><div class="score-ring" style="--score:${selectedCase.risk}"><div class="score-number"><b>${selectedCase.risk}</b><span>Risk score</span></div></div><div style="margin-top:15px;text-align:center"><span class="badge ${selectedCase.risk>=80?"badge-red":selectedCase.risk>=60?"badge-yellow":"badge-green"}">${scoreLabel(selectedCase.risk)}</span><p style="font-size:11px;color:var(--muted)">${selectedCase.confidence}% confidence</p></div></div>
+  <div class="card" style="grid-column:span 2"><div class="section-title"><h3>Explainable Risk Factors</h3><span>Weighted demo model</span></div><div class="risk-bars">${factors.map(f=>`<div class="risk-line"><span>${esc(f[0])}</span><div class="bar"><i style="width:${f[1]}%"></i></div><b>${Math.round(f[1])}</b></div>`).join("")}</div></div>
+ </div>
+ <div class="grid grid-2" style="margin-top:16px">
+  <div class="card"><div class="section-title"><h3>Why this wallet is ${scoreLabel(selectedCase.risk)}</h3></div><ol style="font-size:12px;line-height:2">${selectedCase.pattern.split(" + ").map(x=>`<li>${esc(x)} signal detected.</li>`).join("")}<li>${selectedCase.hops} hop(s) were traversed in the simulated graph.</li><li>${selectedCase.cross?"Cross-chain activity increases investigation priority.":"No cross-chain activity detected in this case."}</li></ol><p style="font-size:10px;color:var(--muted);margin-top:10px">This score sets investigation priority — it is not proof of a crime and must not be treated as a factual determination of guilt.</p></div>
+  <div class="card"><div class="section-title"><h3>Model Classification</h3></div><div class="detail-list"><div class="detail"><span>Risk category</span><b>${scoreLabel(selectedCase.risk)}</b></div><div class="detail"><span>Confidence</span><b>${selectedCase.confidence}%</b></div><div class="detail"><span>Detection mode</span><b>Rule + simulated ML</b></div><div class="detail"><span>Evidence count</span><b>${factors.filter(x=>x[1]>=60).length}</b></div><div class="detail"><span>Recommendation</span><b>${selectedCase.risk>=80?"Prioritize investigation":"Review evidence"}</b></div></div></div>
+ </div>`
+}
+document.getElementById("recalculateRisk").onclick=()=>{logAction("Risk recalculated","AI Risk Engine");renderRisk();notify("Risk score recalculated")};
+
+function renderVasp(){
+ const ranked=[...demoEntities].map(e=>({...e,score:Math.max(25,Math.min(98,e.confidence+(selectedCase.vasp===e.name?5:0)-(selectedCase.chain===e.chain?0:12)))})).sort((a,b)=>b.score-a.score);
+ document.getElementById("vaspPanel").innerHTML=ranked.map((e,i)=>`<div class="card">
+ <div style="display:flex;justify-content:space-between"><span class="badge ${i===0?"badge-green":i===1?"badge-yellow":"badge-blue"}">${i===0?"Most probable":i===1?"Alternative":"Weak candidate"}</span><strong>${e.score}%</strong></div>
+ <h3 style="font-size:16px;margin:15px 0 5px">${esc(e.name)}</h3><p style="font-size:11px;color:var(--muted);margin:0">${esc(e.type)} · ${esc(e.chain)}</p>
+ <div class="detail-list" style="margin-top:15px"><div class="detail"><span>Evidence</span><b>${esc(e.evidence)}</b></div><div class="detail"><span>Matching wallets</span><b>${e.wallets}</b></div><div class="detail"><span>Risk</span><b class="risk ${riskClass(e.risk)}">${e.risk}</b></div><div class="detail"><span>Recorded observation</span><b>${e.last}</b></div></div>
+ <button class="btn btn-light" style="width:100%;margin-top:14px" onclick="openModal('Simulated Entity Intelligence','<p><strong>${esc(e.name)}</strong></p><p>${esc(e.evidence)}</p><p>Confidence: ${e.score}%</p><div class=&quot;demo-note&quot;>Probable Demo Attribution · Simulated Intelligence</div>')">View Evidence</button>
+ </div>`).join("");
+}
+
+function renderCrossChain(){
+ const rows=chains.map(ch=>({chain:ch,tx:getTx().filter(t=>t.chain===ch),risk:ch===selectedCase.chain?scoreLabel(selectedCase.risk):"Low"}));
+ document.getElementById("chainTable").innerHTML=`<div class="section-title"><h3>Network Activity</h3><span>${selectedCase.cross?"Cross-chain activity detected":"No cross-chain activity in selected case"}</span></div><div class="table-wrap"><table><thead><tr><th>Chain</th><th>Transactions</th><th>Volume</th><th>Bridges</th><th>Risk</th><th>Related Wallets</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${r.chain}</b></td><td>${r.tx.length}</td><td>${r.tx.reduce((s,t)=>s+t.amount,0).toFixed(2)}</td><td>${selectedCase.cross&&r.chain===selectedCase.chain?"1 detected":"0"}</td><td class="risk ${riskClass(r.risk)}">${r.risk}</td><td>${Math.max(1,r.tx.length+1)}</td></tr>`).join("")}</tbody></table></div>`;
+ const flow=selectedCase.cross?[selectedCase.chain,"Bridge",selectedCase.chain==="Ethereum"?"Polygon":"Ethereum","Intermediary","Demo Exchange"]:[selectedCase.chain,"Intermediary","Demo Exchange"];
+ document.getElementById("crossFlow").innerHTML=flow.map((x,i)=>`<div style="display:flex;align-items:center;gap:12px"><div class="card" style="padding:14px 18px;text-align:center;background:${i===1||x==="Bridge"?"#f5f3ff":"#f0fdf4"}"><i class="fa-solid ${x==="Bridge"?"fa-road-bridge":x==="Intermediary"?"fa-user-secret":x.includes("Exchange")?"fa-building-columns":"fa-link"}"></i><br><b style="font-size:11px">${esc(x)}</b></div>${i<flow.length-1?'<i class="fa-solid fa-arrow-right" style="color:#7b9384"></i>':""}</div>`).join("");
+}
+
+function renderSuspicious(){
+ const q=(document.getElementById("susSearch").value||"").toLowerCase(),r=document.getElementById("susRisk").value;
+ const arr=demoWallets.filter(w=>w.risk>=45).filter(w=>(!q||[w.address,w.caseId,w.vasp].join(" ").toLowerCase().includes(q))&&(!r||scoreLabel(w.risk)===r));
+ document.getElementById("susTable").innerHTML=`<table><thead><tr><th>Wallet</th><th>Chain</th><th>Risk</th><th>Score</th><th>Transactions</th><th>Volume</th><th>Pattern</th><th>Case</th><th>Status</th><th>Action</th></tr></thead><tbody>${arr.map(w=>{const c=demoCases.find(x=>x.id===w.caseId);return `<tr><td class="address">${esc(short(w.address,10))}</td><td>${w.chain}</td><td class="risk ${riskClass(scoreLabel(w.risk))}">${scoreLabel(w.risk)}</td><td>${w.risk}</td><td>${w.tx}</td><td>${w.sent.toLocaleString()}</td><td>${esc(c.pattern)}</td><td>${c.id}</td><td><span class="badge ${w.risk>=80?"badge-red":"badge-yellow"}">${w.risk>=80?"Flagged":"Review"}</span></td><td><button class="btn btn-light" style="padding:6px 8px" onclick="selectCase('${c.id}');nav('wallet')">Investigate</button></td></tr>`}).join("")}</tbody></table>`;
+}
+["susSearch","susRisk"].forEach(id=>document.getElementById(id).oninput=renderSuspicious);
+
+function renderAlerts(){
+ const unread=alerts.filter(a=>!a.read).length;
+ document.getElementById("topAlertCount").textContent=unread;
+ document.getElementById("navAlertCount").textContent=unread;
+ document.getElementById("alertList").innerHTML=alerts.map(a=>`<div class="alert" style="${a.read?"opacity:.55":""}">
+ <div class="alert-icon"><i class="fa-solid ${a.severity==="Critical"?"fa-skull-crossbones":"fa-triangle-exclamation"}"></i></div>
+ <div><strong>${esc(a.title)}</strong><span class="badge ${a.severity==="Critical"?"badge-red":"badge-yellow"}" style="margin-left:6px">${a.severity}</span><p>${esc(a.description)} · ${esc(a.caseId)} · ${esc(short(a.wallet,7))}</p></div>
+ <div class="toolbar"><button class="btn btn-light" style="padding:7px" onclick="selectCase('${a.caseId}');nav('wallet')">Investigate</button><button class="btn btn-outline" style="padding:7px" onclick="readAlert(${a.id})">${a.read?"Read":"Mark Read"}</button></div>
+ </div>`).join("")||"<p style='color:var(--muted)'>No alerts.</p>";
+}
+function readAlert(id){const a=alerts.find(x=>x.id===id);if(a)a.read=true;save(STORAGE.alerts,alerts);logAction("Alert marked read","Alerts");renderAlerts()}
+document.getElementById("markAllRead").onclick=()=>{alerts.forEach(a=>a.read=true);save(STORAGE.alerts,alerts);logAction("All alerts marked read","Alerts");renderAlerts();notify("All alerts marked as read")};
+document.getElementById("notificationBtn").onclick=()=>nav("alerts");
+
+function reportHTML(){
+ const c=selectedCase,w=getWallet(),tx=getTx();
+ return `<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #14532d;padding-bottom:14px"><div><div style="font-weight:800;font-size:20px;color:#14532d">CYBERPHIX</div><div>Blockchain Fraud Intelligence</div></div><span class="badge badge-green">DEMO / SIMULATED</span></div>
+ <div class="report-section"><h2>Automated Investigation Report</h2><p><strong>Case:</strong> ${esc(c.id)} · <strong>Date:</strong> ${new Date().toLocaleDateString()}</p><p>This report converts a victim-reported wallet into explainable simulated blockchain intelligence. It is intended for demonstration only.</p></div>
+ <div class="report-section"><h3>1. Victim Report</h3><p>Reported identifier: <strong>${esc(c.victim)}</strong><br>Reported wallet: <span class="address">${esc(c.wallet)}</span><br>Blockchain: ${esc(c.chain)}<br>Priority: ${esc(c.priority)}<br>Approximate loss: ${c.loss.toLocaleString()} demo units</p></div>
+ <div class="report-section"><h3>2. Transaction Analysis</h3><p>${tx.length} simulated transactions were analyzed, including ${w.incoming} incoming and ${w.outgoing} outgoing movements. The trace depth is ${c.hops} hop(s).</p></div>
+ <div class="report-section"><h3>3. Fund Flow Intelligence</h3><p>The simulated graph reconstructs a path from victim/suspect activity through intermediary wallets and ${c.cross?"a cross-chain bridge":"a protocol interaction"} toward a destination entity.</p><p><strong>Observed pattern:</strong> ${esc(c.pattern)}</p></div>
+ <div class="report-section"><h3>4. Risk Assessment</h3><p><strong>${c.risk}/100 · ${scoreLabel(c.risk)} Risk · ${c.confidence}% Confidence</strong></p><p>Primary signals include ${esc(c.pattern.toLowerCase())}, ${c.hops} hop tracing, and ${c.cross?"cross-chain activity":"no cross-chain activity in this case"}.</p></div>
+ <div class="report-section"><h3>5. Probable Demo Attribution</h3><p><strong>${esc(c.vasp)}</strong></p><p>This is a simulated attribution candidate and is not a factual identification of a real exchange or VASP.</p></div>
+ <div class="report-section"><h3>6. Recommended Action</h3><p>${c.risk>=80?"Prioritize the case for investigator review, preserve transaction evidence, validate entity intelligence against authoritative sources, and escalate according to applicable procedures.":"Continue monitoring and validate suspicious signals with additional transaction and entity evidence before escalation."}</p></div>
+ <div class="report-section"><h3>7. Investigator Notes</h3><textarea id="reportNotes" placeholder="Add investigation notes...">${localStorage.getItem("cyberphix_notes_"+c.id)||""}</textarea><button class="btn btn-light" style="margin-top:8px" onclick="saveNotes()">Save Notes</button></div>
+ <p style="font-size:10px;color:#789083;margin-top:18px">DEMO / SIMULATED INVESTIGATION DATA · No private keys, wallet signing, or cryptocurrency transfers are performed by this application.</p>`;
+}
+function renderReport(){document.getElementById("reportPreview").innerHTML=reportHTML()}
+function saveNotes(){const v=document.getElementById("reportNotes").value;localStorage.setItem("cyberphix_notes_"+selectedCase.id,v);logAction("Investigator notes saved","Report");notify("Notes saved")}
+document.getElementById("generateReport").onclick=()=>{renderReport();logAction("Report generated","Investigation Report");notify("Investigation report generated")};
+document.getElementById("printReport").onclick=()=>{renderReport();logAction("Report printed","Investigation Report");window.print()};
+document.getElementById("downloadPdf").onclick=downloadPDF;
+
+function downloadPDF(){
+ const {jsPDF}=window.jspdf||{};if(!jsPDF){notify("PDF library unavailable");return}
+ const doc=new jsPDF({unit:"pt",format:"a4"}),c=selectedCase,w=getWallet(),tx=getTx();
+ let y=45;
+ const lines=[
+  "CYBERPHIX — BLOCKCHAIN FRAUD INTELLIGENCE",
+  "AUTOMATED INVESTIGATION REPORT — DEMO / SIMULATED DATA",
+  "",
+  `Case: ${c.id}`,
+  `Victim: ${c.victim}`,
+  `Suspect wallet: ${c.wallet}`,
+  `Blockchain: ${c.chain}`,
+  `Risk: ${c.risk}/100 (${scoreLabel(c.risk)})`,
+  `Confidence: ${c.confidence}%`,
+  `Transactions traced: ${tx.length}`,
+  `Trace depth: ${c.hops} hops`,
+  `Cross-chain: ${c.cross?"Detected":"Not detected"}`,
+  `Probable demo attribution: ${c.vasp}`,
+  "",
+  "Observed pattern:",
+  c.pattern,
+  "",
+  "Recommended action:",
+  c.risk>=80?"Prioritize investigator review and validate all attribution evidence.":"Continue monitoring and validate suspicious signals.",
+  "",
+  "NOTICE: All blockchain data and entity intelligence in this report are simulated for demonstration."
+ ];
+ doc.setFont("helvetica","normal");
+ lines.forEach((line,i)=>{if(y>780){doc.addPage();y=45}doc.setFont("helvetica",i===0? "bold":"normal");doc.setFontSize(i===0?15:10);doc.text(doc.splitTextToSize(line,500),45,y);y+=i===0?28:17});
+ doc.save(`${c.id}-CyberPhix-Investigation.pdf`);
+ logAction("PDF generated","Investigation Report");notify("PDF report downloaded")
+}
+
+function renderAnalytics(){
+ const c=selectedCase;
+ document.getElementById("analyticsCards").innerHTML=[
+  ["Risk Score",c.risk,"fa-gauge-high"],["Response Time","18 min","fa-stopwatch"],["Match Confidence",c.confidence+"%","fa-bullseye"],["Wastage Reduction","31%","fa-chart-line"],
+  ["Transactions",c.txCount,"fa-right-left"],["Intermediaries",c.hops,"fa-route"],["Cross-chain",c.cross?"Yes":"No","fa-shuffle"],["Priority",c.priority,"fa-flag"]
+ ].map(x=>`<div class="card kpi"><div class="kpi-icon"><i class="fa-solid ${x[2]}"></i></div><div class="kpi-value">${x[1]}</div><div class="kpi-label">${x[0]}</div></div>`).join("");
+ makeChart("analyticsRisk","line",["1","2","3","4","5","6","7"],[c.risk-14,c.risk-7,c.risk-10,c.risk,c.risk+2,c.risk-3,c.risk],{label:"Risk"});
+ makeChart("analyticsActivity","bar",["Incoming","Outgoing","Intermediary","Cross-chain"],[getWallet().incoming,getWallet().outgoing,c.hops,c.cross?3:0]);
+}
+
+function renderAudit(){
+ document.getElementById("auditTable").innerHTML=`<table><thead><tr><th>Timestamp</th><th>Investigator</th><th>Action</th><th>Case</th><th>Wallet</th><th>Module</th><th>Result</th><th>Status</th></tr></thead><tbody>${audit.map(a=>`<tr><td>${new Date(a.time).toLocaleString()}</td><td>${esc(a.investigator)}</td><td>${esc(a.action)}</td><td>${esc(a.caseId)}</td><td class="address">${esc(short(a.wallet,7))}</td><td>${esc(a.module)}</td><td>${esc(a.result)}</td><td><span class="badge badge-green">Logged</span></td></tr>`).join("")||"<tr><td colspan='8'>No audit entries.</td></tr>"}</tbody></table>`
+}
+document.getElementById("clearAudit").onclick=()=>{audit=[];save(STORAGE.audit,audit);renderAudit();notify("Local audit trail cleared")};
+
+function globalSearch(){
+ const q=document.getElementById("globalSearch").value.trim().toLowerCase(),box=document.getElementById("searchResults");
+ if(!q){box.classList.add("hidden");return}
+ const results=[];
+ allCases.filter(c=>[c.id,c.wallet,c.chain,c.victim].join(" ").toLowerCase().includes(q)).forEach(c=>results.push({type:"Case",title:c.id,sub:c.wallet,id:c.id}));
+ demoTransactions.filter(t=>[t.hash,t.id,t.from,t.to].join(" ").toLowerCase().includes(q)).slice(0,8).forEach(t=>results.push({type:"Transaction",title:t.id,sub:t.hash,id:t.caseId}));
+ demoEntities.filter(e=>e.name.toLowerCase().includes(q)).forEach(e=>results.push({type:"Entity",title:e.name,sub:e.type,id:selectedCase.id}));
+ box.innerHTML=results.slice(0,12).map(r=>`<div class="search-result" data-id="${esc(r.id)}"><b>${esc(r.title)}</b><small>${esc(r.type)} · ${esc(r.sub)}</small></div>`).join("")||`<div class="search-result">No matching intelligence found.</div>`;
+ box.classList.remove("hidden");
+ box.querySelectorAll(".search-result[data-id]").forEach(x=>x.onclick=()=>{selectCase(x.dataset.id);box.classList.add("hidden");nav("wallet")})
+}
+document.getElementById("globalSearch").oninput=globalSearch;
+document.addEventListener("click",e=>{if(!e.target.closest(".global-search"))document.getElementById("searchResults").classList.add("hidden")});
+
+function openModal(title,body){document.getElementById("modalTitle").textContent=title;document.getElementById("modalBody").innerHTML=body;document.getElementById("modalBackdrop").classList.add("show")}
+function closeModal(){document.getElementById("modalBackdrop").classList.remove("show")}
+document.getElementById("modalClose").onclick=closeModal;
+document.getElementById("modalBackdrop").onclick=e=>{if(e.target.id==="modalBackdrop")closeModal()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+function submitReport(e){
+ e.preventDefault();
+ const w=document.getElementById("reportWallet").value.trim();
+ if(w.length<6){notify("Enter a valid demo wallet address");return}
+ const id=document.getElementById("caseId").value.trim()||"CASE-"+Date.now().toString().slice(-8);
+ const c={id,victim:document.getElementById("victimName").value.trim(),wallet:w,chain:document.getElementById("reportChain").value,risk:Math.min(95,Math.max(20,35+(Number(document.getElementById("loss").value)||0)/1500)),confidence:82,priority:document.getElementById("priority").value,loss:Number(document.getElementById("loss").value)||0,txCount:12,hops:3,cross:false,vasp:"Demo VASP Gamma",first:document.getElementById("incidentDate").value||"On-demand",last:"On-demand",pattern:"User-submitted demo investigation"};
+ customCases.unshift(c);allCases=[...demoCases,...customCases];save(STORAGE.cases,customCases);
+ selectedCase=c;selectedWallet=makeWalletFromCase(c);logAction("Report submitted","Victim Reports","Success",c.id,c.wallet);notify("Victim report submitted · "+c.id);renderAll();nav("wallet")
+}
+document.getElementById("reportForm").onsubmit=submitReport;
+document.getElementById("clearReport").onclick=()=>document.getElementById("reportForm").reset();
+document.getElementById("loadDemoReport").onclick=()=>{const c=demoCases[Math.floor(Math.random()*demoCases.length)];document.getElementById("caseId").value=c.id;document.getElementById("victimName").value=c.victim;document.getElementById("reportWallet").value=c.wallet;document.getElementById("reportChain").value=c.chain;document.getElementById("loss").value=c.loss;document.getElementById("priority").value=c.priority;document.getElementById("description").value=c.pattern;notify("Demo case loaded")};
+
+document.getElementById("liveToggle").onclick=()=>{
+ if(liveTimer){clearInterval(liveTimer);liveTimer=null;document.getElementById("liveToggle").style.background="#fff";notify("Simulated live monitoring stopped");return}
+ document.getElementById("liveToggle").style.background="#dcfce7";notify("Simulated live monitoring started");
+ liveTimer=setInterval(()=>{
+  const c=demoCases[Math.floor(Math.random()*demoCases.length)];
+  alerts.unshift({id:Date.now(),severity:c.risk>=80?"Critical":"High",title:c.risk>=80?"Critical wallet activity":"High-risk transaction",caseId:c.id,wallet:c.wallet,description:"On-demand analysis event generated by demo live mode.",read:false,time:"Demo dataset"});
+  alerts=alerts.slice(0,30);save(STORAGE.alerts,alerts);logAction("Simulated live alert","Live Monitoring","Generated",c.id,c.wallet);renderAlerts();renderKpis()
+ },6000)
+};
+
+document.getElementById("saveSettings").onclick=()=>{save(STORAGE.settings,{ethereum:document.getElementById("apiEth").value,polygon:document.getElementById("apiPolygon").value,bsc:document.getElementById("apiBsc").value,bitcoin:document.getElementById("apiBtc").value,tron:document.getElementById("apiTron").value});notify("API configuration saved locally")};
+
+document.getElementById("exportTxCsv").onclick=()=>{
+ const rows=getTx(),header=["Date","Hash","From","To","Chain","Amount","Asset","Direction","Status","Risk","Hop","Pattern"];
+ const csv=[header,...rows.map(t=>[t.date,t.hash,t.from,t.to,t.chain,t.amount,t.asset,t.direction,t.status,t.risk,t.hop,t.pattern])].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+ downloadBlob(csv,"text/csv",selectedCase.id+"-transactions.csv");logAction("CSV exported","Transactions");notify("Transaction CSV exported")
+}
+function downloadBlob(data,type,name){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+
+function renderAll(){
+ renderCases();renderKpis();renderCharts();renderWallet();renderInvestigation();renderTransactions();renderRisk();renderVasp();renderCrossChain();renderSuspicious();renderAlerts();renderReport();renderAnalytics();renderAudit();
+}
+</script>
+</body>
+</html>
