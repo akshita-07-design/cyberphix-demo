@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="CyberPhix Blockchain Fraud Intelligence Platform - SIH 2026 Demo">
-<title>CyberPhix | Blockchain Fraud Intelligence</title>
+<meta name="description" content="Crypto-Trace Blockchain Fraud Intelligence Platform - SIH 2026 Demo">
+<title>Crypto-Trace | Blockchain Fraud Intelligence</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,7 +112,7 @@ table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{
 <section id="loginScreen" class="login">
   <div class="login-card">
     <div class="login-hero">
-      <div class="logo"><div class="logo-mark"><i class="fa-solid fa-shield-halved"></i></div>CyberPhix</div>
+      <div class="logo"><div class="logo-mark"><i class="fa-solid fa-shield-halved"></i></div>Crypto-Trace</div>
       <h1>Blockchain Fraud Intelligence Platform</h1>
       <p>Transform a reported cryptocurrency wallet into explainable investigation intelligence using transaction tracing, graph analytics, risk scoring and simulated VASP attribution.</p>
       <div class="pills">
@@ -125,12 +125,12 @@ table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{
     </div>
     <div class="login-form">
       <h2>Investigator Login</h2>
-      <div class="sub">Sign in to access the CyberPhix investigation workspace.</div>
+      <div class="sub">Sign in to access the Crypto-Trace investigation workspace.</div>
       <div class="field"><label>Investigator ID</label><input id="loginId" value="investigator01" autocomplete="username"></div>
-      <div class="field"><label>Password</label><input id="loginPassword" type="password" value="cyberphix123" autocomplete="current-password"></div>
+      <div class="field"><label>Password</label><input id="loginPassword" type="password" value="Crypto-Trace123" autocomplete="current-password"></div>
       <button class="btn btn-primary btn-block" id="loginBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</button>
       <button class="btn btn-light btn-block" id="demoLoginBtn" style="margin-top:9px"><i class="fa-solid fa-wand-magic-sparkles"></i> Enter Demo Workspace</button>
-      <div class="demo-note"><strong>Demo credentials:</strong> investigator01 / cyberphix123<br>All blockchain intelligence displayed in this prototype is simulated.</div>
+      <div class="demo-note"><strong>Demo credentials:</strong> investigator01 / Crypto-Trace123<br>All blockchain intelligence displayed in this prototype is simulated.</div>
     </div>
   </div>
 </section>
@@ -139,7 +139,7 @@ table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{
 <div id="app" class="app">
   <aside id="sidebar" class="sidebar">
     <div class="brand">
-      <div class="logo"><div class="logo-mark" style="background:var(--dark);color:#fff"><i class="fa-solid fa-shield-halved"></i></div>CyberPhix</div>
+      <div class="logo"><div class="logo-mark" style="background:var(--dark);color:#fff"><i class="fa-solid fa-shield-halved"></i></div>Crypto-Trace</div>
     </div>
     <div class="nav-title">Investigation</div>
     <button class="nav-item active" data-page="overview"><i class="fa-solid fa-chart-pie"></i>Overview</button>
@@ -158,7 +158,7 @@ table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{
     <button class="nav-item" data-page="audit"><i class="fa-solid fa-clock-rotate-left"></i>Audit Trail</button>
     <div class="nav-title">System</div>
     <button class="nav-item" data-page="settings"><i class="fa-solid fa-gear"></i>Settings</button>
-    <div class="footer-note">CyberPhix · SIH 2026<br>Blockchain & Cybersecurity</div>
+    <div class="footer-note">Crypto-Trace · SIH 2026<br>Blockchain & Cybersecurity</div>
   </aside>
 
   <main class="main">
@@ -371,15 +371,15 @@ table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}th,td{
 
 <script>
 /* =========================================================
-   CYBERPHIX DEMO APPLICATION
+   Crypto-Trace DEMO APPLICATION
    SIH 2026 | Problem Statement 26183
    Demo-only blockchain intelligence.
    ========================================================= */
 
 const API_CONFIG={ethereum:"",polygon:"",bsc:"",bitcoin:"",tron:""};
 const STORAGE={
- cases:"cyberphix_cases",audit:"cyberphix_audit",alerts:"cyberphix_alerts",
- settings:"cyberphix_settings"
+ cases:"Crypto-Trace_cases",audit:"Crypto-Trace_audit",alerts:"Crypto-Trace_alerts",
+ settings:"Crypto-Trace_settings"
 };
 
 const chains=["Ethereum","Bitcoin","Polygon","BNB Chain","Tron","Arbitrum"];
@@ -487,11 +487,11 @@ function scoreLabel(score){return score>=80?"Critical":score>=60?"High":score>=3
 
 function login(){
  const id=document.getElementById("loginId").value.trim(),pw=document.getElementById("loginPassword").value;
- if((id==="investigator01"&&pw==="cyberphix123")||id==="demo"){
+ if((id==="investigator01"&&pw==="Crypto-Trace123")||id==="demo"){
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("app").style.display="block";
   logAction("Login","Authentication");
-  renderAll();notify("Welcome to the CyberPhix demo workspace");
+  renderAll();notify("Welcome to the Crypto-Trace demo workspace");
  }else notify("Invalid demo credentials")
 }
 document.getElementById("loginBtn").onclick=login;
@@ -744,7 +744,7 @@ document.getElementById("notificationBtn").onclick=()=>nav("alerts");
 
 function reportHTML(){
  const c=selectedCase,w=getWallet(),tx=getTx();
- return `<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #14532d;padding-bottom:14px"><div><div style="font-weight:800;font-size:20px;color:#14532d">CYBERPHIX</div><div>Blockchain Fraud Intelligence</div></div><span class="badge badge-green">DEMO / SIMULATED</span></div>
+ return `<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #14532d;padding-bottom:14px"><div><div style="font-weight:800;font-size:20px;color:#14532d">Crypto-Trace</div><div>Blockchain Fraud Intelligence</div></div><span class="badge badge-green">DEMO / SIMULATED</span></div>
  <div class="report-section"><h2>Automated Investigation Report</h2><p><strong>Case:</strong> ${esc(c.id)} · <strong>Date:</strong> ${new Date().toLocaleDateString()}</p><p>This report converts a victim-reported wallet into explainable simulated blockchain intelligence. It is intended for demonstration only.</p></div>
  <div class="report-section"><h3>1. Victim Report</h3><p>Reported identifier: <strong>${esc(c.victim)}</strong><br>Reported wallet: <span class="address">${esc(c.wallet)}</span><br>Blockchain: ${esc(c.chain)}<br>Priority: ${esc(c.priority)}<br>Approximate loss: ${c.loss.toLocaleString()} demo units</p></div>
  <div class="report-section"><h3>2. Transaction Analysis</h3><p>${tx.length} simulated transactions were analyzed, including ${w.incoming} incoming and ${w.outgoing} outgoing movements. The trace depth is ${c.hops} hop(s).</p></div>
@@ -752,11 +752,11 @@ function reportHTML(){
  <div class="report-section"><h3>4. Risk Assessment</h3><p><strong>${c.risk}/100 · ${scoreLabel(c.risk)} Risk · ${c.confidence}% Confidence</strong></p><p>Primary signals include ${esc(c.pattern.toLowerCase())}, ${c.hops} hop tracing, and ${c.cross?"cross-chain activity":"no cross-chain activity in this case"}.</p></div>
  <div class="report-section"><h3>5. Probable Demo Attribution</h3><p><strong>${esc(c.vasp)}</strong></p><p>This is a simulated attribution candidate and is not a factual identification of a real exchange or VASP.</p></div>
  <div class="report-section"><h3>6. Recommended Action</h3><p>${c.risk>=80?"Prioritize the case for investigator review, preserve transaction evidence, validate entity intelligence against authoritative sources, and escalate according to applicable procedures.":"Continue monitoring and validate suspicious signals with additional transaction and entity evidence before escalation."}</p></div>
- <div class="report-section"><h3>7. Investigator Notes</h3><textarea id="reportNotes" placeholder="Add investigation notes...">${localStorage.getItem("cyberphix_notes_"+c.id)||""}</textarea><button class="btn btn-light" style="margin-top:8px" onclick="saveNotes()">Save Notes</button></div>
+ <div class="report-section"><h3>7. Investigator Notes</h3><textarea id="reportNotes" placeholder="Add investigation notes...">${localStorage.getItem("Crypto-Trace_notes_"+c.id)||""}</textarea><button class="btn btn-light" style="margin-top:8px" onclick="saveNotes()">Save Notes</button></div>
  <p style="font-size:10px;color:#789083;margin-top:18px">DEMO / SIMULATED INVESTIGATION DATA · No private keys, wallet signing, or cryptocurrency transfers are performed by this application.</p>`;
 }
 function renderReport(){document.getElementById("reportPreview").innerHTML=reportHTML()}
-function saveNotes(){const v=document.getElementById("reportNotes").value;localStorage.setItem("cyberphix_notes_"+selectedCase.id,v);logAction("Investigator notes saved","Report");notify("Notes saved")}
+function saveNotes(){const v=document.getElementById("reportNotes").value;localStorage.setItem("Crypto-Trace_notes_"+selectedCase.id,v);logAction("Investigator notes saved","Report");notify("Notes saved")}
 document.getElementById("generateReport").onclick=()=>{renderReport();logAction("Report generated","Investigation Report");notify("Investigation report generated")};
 document.getElementById("printReport").onclick=()=>{renderReport();logAction("Report printed","Investigation Report");window.print()};
 document.getElementById("downloadPdf").onclick=downloadPDF;
@@ -766,7 +766,7 @@ function downloadPDF(){
  const doc=new jsPDF({unit:"pt",format:"a4"}),c=selectedCase,w=getWallet(),tx=getTx();
  let y=45;
  const lines=[
-  "CYBERPHIX — BLOCKCHAIN FRAUD INTELLIGENCE",
+  "Crypto-Trace — BLOCKCHAIN FRAUD INTELLIGENCE",
   "AUTOMATED INVESTIGATION REPORT — DEMO / SIMULATED DATA",
   "",
   `Case: ${c.id}`,
@@ -790,7 +790,7 @@ function downloadPDF(){
  ];
  doc.setFont("helvetica","normal");
  lines.forEach((line,i)=>{if(y>780){doc.addPage();y=45}doc.setFont("helvetica",i===0? "bold":"normal");doc.setFontSize(i===0?15:10);doc.text(doc.splitTextToSize(line,500),45,y);y+=i===0?28:17});
- doc.save(`${c.id}-CyberPhix-Investigation.pdf`);
+ doc.save(`${c.id}-Crypto-Trace-Investigation.pdf`);
  logAction("PDF generated","Investigation Report");notify("PDF report downloaded")
 }
 
